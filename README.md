@@ -1,4 +1,4 @@
-# Firebase Studio
+# Vibe Trials - Dojo Game Jam 6
 
 This is a NextJS starter in Firebase Studio.
 

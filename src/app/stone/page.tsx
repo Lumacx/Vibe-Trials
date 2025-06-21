@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GameUI } from "@/components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
+import AudioPlayer from "@/components/AudioPlayer";
 
 export default function StoneLabyrinthPage() {
   const [score, setScore] = useState(0);
@@ -31,6 +32,7 @@ export default function StoneLabyrinthPage() {
           </Button>
         </Link>
       </header>
+      <AudioPlayer src="/music/3_Ancient_Echoes.mp3" />
 
       <GameUI score={score} time={timeLeft} />
 

@@ -4,11 +4,17 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GameUI } from "@/components/game/GameUI";
-import { ArrowLeft } from "lucide-react";
+import AudioPlayer from "@/components/AudioPlayer";
+import { ArrowLeft } from 'lucide-react';
 
 export default function SkyGuardianPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
+  const [audio] = useState(
+    typeof Audio !== "undefined"
+      ? new Audio('/home/user/studio/src/assets/audio/music/4_Neon_Horizons.mp3')
+      : undefined
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -22,7 +28,7 @@ export default function SkyGuardianPage() {
     <div className="relative h-screen w-screen overflow-hidden bg-sky-900">
       <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/333344/a020f0.png?text=Sky+Background')] bg-cover bg-center" data-ai-hint="sky clouds"></div>
       <div className="absolute inset-0 bg-black/20"></div>
-      
+
       <header className="fixed top-4 left-4 z-50">
         <Link href="/" passHref>
           <Button variant="outline">
@@ -31,6 +37,8 @@ export default function SkyGuardianPage() {
           </Button>
         </Link>
       </header>
+
+      <AudioPlayer src="/music/4_Neon_Horizons.mp3" volume={0.15} />
 
       <GameUI score={score} time={timeLeft} />
 

@@ -37,3 +37,5 @@ export function GameUI({ score, time, health, className, ...props }: GameUIProps
     </div>
   );
 }
+
+export default GameUI;

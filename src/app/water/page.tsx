@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GameUI } from "@/components/game/GameUI";
+import AudioPlayer from "@/components/AudioPlayer";
 import { ArrowLeft } from "lucide-react";
 
 export default function HydroHeroesPage() {
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(100);
   const [timeLeft, setTimeLeft] = useState(90);
+  const [audio] = useState(typeof Audio !== 'undefined' ? new Audio('/src/assets/audio/music/5_Chasing_Shadows.mp3') : undefined);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -33,6 +35,7 @@ export default function HydroHeroesPage() {
         </Link>
       </header>
 
+      <AudioPlayer src="/music/5_Chasing_Shadows.mp3" volume={0.15} />
       <GameUI score={score} time={timeLeft} health={health} />
 
       <main className="relative z-10 flex h-full w-full flex-col items-center justify-center">

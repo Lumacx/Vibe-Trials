@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import AudioPlayer from "@/components/AudioPlayer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GameUI } from "@/components/game/GameUI";
@@ -9,6 +10,7 @@ import { ArrowLeft } from "lucide-react";
 export default function ForestCrossingPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,12 +20,18 @@ export default function ForestCrossingPage() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+ // Removed direct audio handling
+  }, []);
+
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-green-900">
       <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/223322/00ff00.png?text=Forest+Highway')] bg-cover bg-center" data-ai-hint="highway forest"></div>
       <div className="absolute inset-0 bg-black/30"></div>
       
       <header className="fixed top-4 left-4 z-50">
+ <AudioPlayer src="/music/6_Pixel_Groove_Adventure.mp3" volume={0.15} />
+
         <Link href="/" passHref>
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />

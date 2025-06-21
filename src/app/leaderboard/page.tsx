@@ -9,7 +9,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AudioPlayer from "@/components/AudioPlayer";
 import { ArrowLeft } from "lucide-react";
+
+const backgroundMusic = "/music/7_Eternal_Horizon.mp3";
 
 const games = [
   { name: "Flame Frenzy", data: [
@@ -41,6 +44,9 @@ const games = [
 
 export default function LeaderboardPage() {
   return (
+    <>
+      <AudioPlayer src={backgroundMusic} loop={true} />
+
     <div className="container mx-auto flex min-h-screen flex-col items-center p-4 pt-16 sm:p-8">
       <header className="text-center">
         <h1 className="font-headline text-6xl font-bold text-primary">
@@ -82,11 +88,12 @@ export default function LeaderboardPage() {
       </Tabs>
 
       <Link href="/" passHref className="mt-12">
-        <Button>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Return to Hub
-        </Button>
-      </Link>
-    </div>
+          <Button>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Return to Hub
+          </Button>
+        </Link>
+      </div>
+    </>
   );
 }

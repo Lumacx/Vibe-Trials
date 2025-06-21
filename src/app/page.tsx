@@ -51,8 +51,9 @@ const gameSymbols = [
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-background text-foreground">
-      <header className="text-center mb-8 sm:mb-12">
+    <main className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-background text-foreground overflow-hidden">
+      <div className="absolute inset-0 z-0 bg-stars animate-stars" />
+      <header className="relative z-10 text-center mb-8 sm:mb-12">
         <h1 className="font-headline text-5xl sm:text-7xl font-bold tracking-tighter text-primary">
           RetroVibe Arcade
         </h1>
@@ -61,7 +62,7 @@ export default function Home() {
         </p>
       </header>
 
-      <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg aspect-square">
+      <div className="relative z-10 w-full max-w-sm sm:max-w-md md:max-w-lg aspect-square">
         {gameSymbols.map((game) => (
           <Link
             href={game.href}
@@ -80,7 +81,7 @@ export default function Home() {
           </Link>
         ))}
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] flex flex-col items-center gap-4">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(50%+2rem)] flex flex-col items-center gap-4">
           <Link href="/credits">
             <button
               className="group transform transition-transform duration-300 hover:scale-110"

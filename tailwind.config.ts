@@ -85,10 +85,15 @@ export default {
             height: '0',
           },
         },
+        'stars': {
+          'from': { backgroundPosition: '0 0' },
+          'to': { backgroundPosition: '-10000px 5000px' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'stars': 'stars 200s linear infinite',
       },
       dropShadow: {
         lg: '0 0 1rem hsl(var(--accent) / 0.5)',

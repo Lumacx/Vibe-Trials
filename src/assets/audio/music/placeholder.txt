@@ -1,0 +1,2 @@
+// This directory is for background music files (e.g., .mp3, .wav).
+// Example: hub-music.mp3, fire-game-music.mp3

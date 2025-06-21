@@ -1,0 +1,2 @@
+// This directory is for sound effect files (e.g., .mp3, .wav).
+// Example: gem-cut.wav, explosion.wav, player-hit.wav

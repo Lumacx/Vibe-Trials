@@ -1,0 +1,2 @@
+// This directory is for 3D model files (e.g., .gltf, .obj).
+// Example: player.gltf, gem.gltf, car.gltf

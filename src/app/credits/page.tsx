@@ -12,9 +12,9 @@ export default function CreditsPage() {
         This game was created for the Vibe Retro Game Jam. It's a collection of five elemental-themed mini-games designed to be fun, replayable, and nostalgic.
       </p>
       <div className="mt-8 space-y-2 font-code text-accent">
-        <p>Lead Developer: AI Studio</p>
-        <p>Concept: User</p>
-        <p>Engine: React, Next.js, Three.js</p>
+        <p>Lead Developer: Luis Cajiao</p>
+        <p>Concept: Studio Swai</p>
+        <p>Engine: React, Next.js, Three.js, Dojo Engine, Cairo, Starknet</p>
         <p>Styling: Tailwind CSS, ShadCN/UI</p>
       </div>
       <Link href="/" passHref className="mt-12">

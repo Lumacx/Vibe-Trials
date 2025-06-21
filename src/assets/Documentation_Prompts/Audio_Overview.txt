@@ -1,0 +1,73 @@
+Vibe Trials - Audio Overview
+
+Here's a detailed list of audio assets needed for your "Vibe Retro Game Jam" project, including recommended prompts for generating instrumental background music using a tool like Suno, and a list of sound effects for each game.
+Audio Assets List
+We need background music for 7 distinct pages/games and a variety of sound effects for each game.
+Background Music (Instrumental)
+1.	Home Page (Space Theme - Ambient)
+o	Description: Calming, atmospheric, and slightly futuristic ambient music, evoking a sense of wonder and vastness. It should be subtle enough not to distract but engaging enough to set a mystical tone for the game selection hub.
+o	Recommended Suno Prompt: 
+o	"Genre: Ambient Retro Synth, Style: Calming, ethereal, space-themed, dream wave. Mood: Mysterious, tranquil, expansive. Instruments: Smooth synthesizers, soft pads, subtle arpeggios, light percussion. Tempo: Slow. Instrumental only."
+2.	Fire Game (Flame Frenzy - Intense Action)
+o	Description: Fast-paced, high-energy retro track with a driving beat. Think classic arcade action, motivating the player to move quickly and decisively.
+o	Recommended Suno Prompt: 
+o	"Genre: Retro Electro-Synth, Style: High-energy, fast-paced, driving beat, arcade action. Mood: Intense, fiery, urgent. Instruments: Punchy retro drums, pulsing basslines, sharp synth leads, arpeggiated melodies. Tempo: Fast. Instrumental only."
+3.	Stone Game (Stone Labyrinth - Mystical/Eerie)
+o	Description: Mystical, slightly eerie, ambient retro track. It should feel exploration and a bit suspenseful, suitable for navigating a labyrinth.
+o	Recommended Suno Prompt: 
+o	"Genre: Retro Dungeon Synth, Style: Mystical, eerie, atmospheric, 8-bit inspired. Mood: Exploratory, ancient, slightly ominous. Instruments: Low-fidelity synth pads, simple chiptune melodies, subtle reverberating percussion. Tempo: Moderate. Instrumental only."
+4.	Wind Game (Sky Guardian - Upbeat/Driving)
+o	Description: Upbeat, driving, high-energy retro synth wave. This should match the fast-paced, aerial combat feel of a Galaga-style game.
+o	Recommended Suno Prompt: 
+o	"Genre: Synth wave, Style: Upbeat, driving, energetic, 80s arcade, futuristic. Mood: Adventurous, soaring, powerful. Instruments: Classic synth wave drums, prominent bassline, bright lead synths, arpeggios. Tempo: Fast. Instrumental only."
+5.	Water Game (Hydro Heroes - Urgent Action)
+o	Description: Urgent, action-oriented retro track. This should convey the desperate but heroic struggle against fires and flame monsters.
+o	Recommended Suno Prompt: 
+o	"Genre: Retro Action Score, Style: Urgent, heroic, dynamic, urgent. Mood: Determined, desperate, climactic. Instruments: Pounding drums, cinematic retro synths, dramatic brassy synth lines, pulsating bass. Tempo: Moderate to Fast. Instrumental only."
+6.	Nature Game (Forest Crossing - Cheerful/Bouncy)
+o	Description: Cheerful, upbeat, bouncy retro track. This should reflect the lighthearted and somewhat challenging journey across the highway to the forest.
+o	Recommended Suno Prompt: 
+o	"Genre: Chiptune Funk, Style: Cheerful, bouncy, playful, 8-bit, lighthearted. Mood: Fun, quirky, adventurous. Instruments: Classic chiptune sounds, groovy basslines, simple melodic hooks, upbeat drums. Tempo: Moderate. Instrumental only."
+7.	Credit Page (Reflective/Concluding)
+o	Description: A calm, reflective, and slightly melancholic retro track suitable for a credit or end-of-game screen.
+o	Recommended Suno Prompt: 
+o	"Genre: Retro Ambient, Style: Reflective, calm, melancholic, evolving pads. Mood: Concluding, hopeful, peaceful. Instruments: Warm analog synths, sustained chords, gentle arpeggios, minimal percussion. Tempo: Slow. Instrumental only."
+Sound Effects (SFX)
+General UI SFX:
+•	Button Click (subtle "pop" or "bleep")
+•	Hover Sound (light "shimmer" or "click")
+•	Game Start Countdown ("3, 2, 1, Go!") - retro voice or synth sequence
+•	Pause/Unpause ("whoosh" or "warp" sound)
+Game 1: Flame Frenzy (Fire)
+•	Gem Cut: Satisfying "shing!" or "collect" sound.
+•	Ice Cube Hit: "freeze" sound (e.g., icy crackle, distorted slowing sound).
+•	Explosion Hit: "boom!" sound, subtle health reduction "thud."
+•	Object Woosh: Gentle whooshing as objects fly up.
+•	Game Over: Dramatic sting/loss sound.
+Game 2: Stone Labyrinth (Stone)
+•	Player Step: Subtle "clink" or "thud" sound.
+•	Falling into Hole: Dramatic "whoosh" and "thump" impact sound.
+•	Exit Reached: "ding!" or "success" chime.
+•	Game Over: Ominous sting/loss sound.
+Game 3: Sky Guardian (Wind)
+•	Player Shot: "whoosh" or "zap" sound.
+•	Enemy Explosion: "pop" or "shatter" sound.
+•	Enemy Projectile: Distinct "pew" or "laser" sound.
+•	Player Hit: Dramatic "crash" or "game over" sound (instant defeat).
+•	Game Over: Dramatic sting/loss sound.
+Game 4: Hydro Heroes (Water)
+•	Water Blast: "whoosh" of water, continuous spray sound.
+•	Fire Extinguish: "hiss" or "sizzle" sound.
+•	Monster Movement: Low "growl" or "swoosh."
+•	Player Hit: "ouch" sound, health reduction "thump."
+•	House Burning: Subtle crackling fire sound.
+•	Game Over: Despairing sting/loss sound.
+Game 5: Forest Crossing (Nature)
+•	Player Step/Hop: Gentle "hop" or "footstep" sound.
+•	Vehicle Pass By: Subtle "whoosh" or engine sound.
+•	Player Hit: "splat" or "crash" sound (instant defeat).
+•	Lane Crossed: Small "chime" or "ding."
+•	Forest Reached: Victorious fanfare.
+•	Game Over: Defeated sting/loss sound.
+These lists and prompts should give you a solid foundation for acquiring the necessary audio assets for your game jam!
+

@@ -1,0 +1,408 @@
+Vibe Trials (Games Design Document)
+I want to compete in a Game Jam creating 5 simple retro games using Vibe Coding, we want to use React and Typescript languages for the front end. Use ThreeJS for 3d assets.
+
+The idea is for them to be 1 screen games such as Galaga, Frogger, Mine Sweeps, Fruit Ninja, and bomber man
+
+I envision a homepage with 5 levels to select with games following these themes:
+1) Fire (Fruit Ninja style, Gems, Ice Cubes and Explosives players use a flame sword to cut the Gems to get points, Ice Cubes freeze the player for 2 seconds and Explosive hit 25% of their life health)
+2) Stone (Mine Sweep style, a labyrinth in stone and instead than mines, holes for player to fall) 
+3) Wind (Galaga style, Player uses a wind whirl to attack the aliens)
+4) Water (Bomberman style, a town on fire and players are firefighters need to put fire out with water hose vs flame monsters attacking them and burning houses)
+5) Nature (Frogger Style, players need to cross a highway to reach the forest, avoid being hit by cars and motorcycles. Players can move up, down, left or right 1 space at the time but not jump. This is a top-down view game)
+
+All 5 symbols in order of a 5-point star and in the center a treasure chest
+
+can you please help me create the Game Design Document for each level and their visuals to use it in a step-by-step tasks process for the Ai Studio to complete it.
+
+Include placeholders for folder structure, files, audio (Music and Sound effects), assets, background, leaderboards, timers on each game 90 seconds, , points logic (mechanics), and look & feel standards
+
+Vibe Retro Game Jam - Game Design Document
+1. Project Overview
+•	Project Title: Vibe Retro Game Jam
+•	Concept: A collection of five distinct retro-inspired mini-games, each themed around an elemental concept (Fire, Stone, Wind, Water, Nature). Players navigate a central hub to select games, aiming for high scores on a shared leaderboard.
+•	Platform: Web-based (Browser)
+•	Technology Stack: React, TypeScript, Three.js (for 3D assets/environments)
+•	Target Audience: Casual gamers, retro game enthusiasts.
+•	Core Pillars: Fun, quick replayability, nostalgic aesthetic with modern touches.
+2. Global Game Elements & Standards
+2.1. Homepage (Game Selection Hub)
+•	Layout: A mystical, possibly celestial or ancient, environment. The five elemental symbols will be arranged in a 5-point star formation.
+•	Interaction: Clicking on an elemental symbol (e.g., a fiery icon for "Fire" game) will transition the player to that specific game. The central treasure chest will serve as a placeholder for a "Game Jam Showcase" or "Credits" button.
+•	Visuals:
+o	Background: A stylized, low-poly 3D environment rendered with Three.js, reflecting a serene yet engaging atmosphere.
+o	Elemental Symbols: Each symbol is a distinct, glowing 3D asset (e.g., a stylized flame for Fire, a rough-hewn boulder for Stone, a swirling cloud for Wind, a water ripple for Water, a leaf or tree for Nature). These will have subtle idle animations.
+o	Treasure Chest: A central, inviting 3D treasure chest model with a slight gleam.
+•	Audio: Ambient, calming background music for the hub. Subtle sound effects on hover/click of symbols.
+2.2. Common Game Mechanics
+•	Timer: Each game will have a 90-second countdown timer. When the timer reaches 0, the game ends.
+•	Life Health: (Applicable to Fire and Water games specifically). A health bar or numerical display representing player health.
+•	Scoring: Points awarded for achieving game-specific objectives.
+•	Game Over Screen: Displays final score, "Time's Up!" or "Game Over!" message, and options to retry or return to the main menu.
+•	Pause Menu: Simple menu accessible during gameplay (e.g., via ESC key or a UI button) with options to resume, restart, or return to the main menu.
+2.3. Leaderboard
+•	Functionality: A placeholder for a simple, local leaderboard (or display of top scores, with the intention to implement persistent storage if time allows in a real jam). It will display the top N scores for each game.
+•	Access: Accessible from the main menu or a dedicated "Leaderboard" section within the hub.
+•	Display: Score, Player Name (placeholder: "Player 1", "Player 2", etc.).
+2.4. Look & Feel Standards
+•	Art Style: Low-poly 3D models with vibrant, retro-inspired color palettes. Emphasis on clear readability and distinct asset identification.
+•	Color Palette: Each game will have a dominant theme color, but overall, a cohesive retro-arcade palette will be used (e.g., neon accents, pixel art inspired textures for UI).
+•	Fonts: Pixelated or retro-futuristic font for UI elements (e.g., "Press Start 2P" or similar Google Fonts). "Inter" will be the primary content font.
+•	UI Elements: Clean, rounded-corner buttons. Consistent placement of timer, score, and health displays. Simple, clear iconography.
+•	Transitions: Smooth fading or simple slide transitions between screens.
+2.5. Audio Standards
+•	Background Music: Each game will have a unique, looping retro-synth or 8-bit inspired track.
+•	Sound Effects (SFX): Distinct, satisfying retro SFX for actions (cuts, hits, collection, movement, explosions, game over, etc.).
+•	Volume Control: Placeholder for basic volume controls (music, SFX).
+3. Game Level Design Documents
+3.1. Game 1: Flame Frenzy (Fire Theme)
+•	Genre/Style: Fruit Ninja-style cutting game (3D assets).
+•	Core Gameplay Loop: Objects (Gems, Ice Cubes, Explosives) fly up from the bottom of the screen. The player uses a "flame sword" cursor/input to "cut" objects.
+•	Player Character/Control:
+o	Control: Mouse drag or touch swipe. The "flame sword" is a visual indicator that follows the cursor/touch.
+o	Movement: Player's flame sword can move freely across the screen.
+•	Objectives: Cut Gems to earn points. Avoid cutting Ice Cubes and Explosives.
+•	Enemies/Obstacles:
+o	Gems (Score): Various colored, faceted 3D gem models. Cutting them awards points.
+o	Ice Cubes (Freeze): Transparent blue 3D ice cube models. Cutting an Ice Cube freezes the player's sword (disables cutting) for 2 seconds. Visual feedback: sword turns icy blue, movement slows.
+o	Explosives (Damage): Small, dark 3D bomb/explosive models. Cutting an Explosive reduces player health by 25%. Visual feedback: screen shake, health bar flashes red.
+•	Scoring Logic:
+o	Gems: +100 points per cut.
+o	Missing a Gem: -50 points.
+o	Cutting Ice Cube: No points, 2-second freeze.
+o	Cutting Explosive: No points, -25% health.
+•	Timer: 90 seconds. Game ends when time runs out or health reaches 0.
+•	Win/Loss Conditions:
+o	Win: Highest score when timer runs out.
+o	Loss: Health reaches 0.
+•	Visuals (Three.js focus):
+o	Overall Aesthetic: Fiery, intense, dynamic.
+o	Key Assets:
+	Flame Sword: A stylized, glowing 3D sword model following the cursor/touch.
+	Gems: Low-poly 3D models (e.g., ruby, emerald, sapphire shapes) with bright emissive materials.
+	Ice Cubes: Simple 3D cube models with transparent, refractive materials.
+	Explosives: Small, dark spherical 3D models with a fuse, possibly a subtle pulsing light.
+	Cutting Effect: A brief, particle-based flame effect along the cut path when a valid object is cut.
+o	Background: Dark, volcanic landscape or a swirling fiery vortex, rendered in 3D.
+o	UI Elements: Health bar (red/orange), Score display, Timer display.
+•	Audio:
+o	Background Music: Fast-paced, high-energy retro track with a driving beat.
+o	Sound Effects:
+	Gem Cut: Satisfying "shing!" or "collect" sound.
+	Ice Cube Hit: "freeze" sound.
+	Explosion Hit: "boom!" sound, subtle health reduction sound.
+	Object Woosh: Gentle whooshing as objects fly up.
+	Game Over: Dramatic sting.
+3.2. Game 2: Stone Labyrinth (Stone Theme)
+•	Genre/Style: Mine Sweeper-style (top-down, grid-based movement in a 3D labyrinth).
+•	Core Gameplay Loop: Player navigates a grid-based labyrinth. The goal is to reach an exit without falling into "holes" (mines). Player can move one space at a time.
+•	Player Character/Control:
+o	Control: Arrow keys or on-screen directional pad for movement (Up, Down, Left, Right).
+o	Movement: Player character moves instantly one grid square at a time.
+o	Character: A small, sturdy 3D Golem or adventurer.
+•	Objectives: Navigate from a starting point to an exit point within the time limit, avoiding holes.
+•	Enemies/Obstacles:
+o	Holes: Specific grid squares that, when entered, cause the player to fall and lose. Visually, these are dark pits or collapsed sections.
+o	Walls: Impassable 3D stone wall segments defining the labyrinth path.
+•	Scoring Logic:
+o	Reaching exit: +500 points.
+o	Each step taken: +10 points (encourages exploration, but also faster movement).
+o	Falling into hole: Game Over (no score awarded for that round).
+•	Timer: 90 seconds. Game ends when time runs out or player falls.
+•	Win/Loss Conditions:
+o	Win: Reaching the exit within the time limit.
+o	Loss: Falling into a hole or time running out.
+•	Visuals (Three.js focus):
+o	Overall Aesthetic: Ancient, earthy, solid. Isometric or top-down 3D view.
+o	Key Assets:
+	Player: Simple 3D Golem or adventurer model.
+	Labyrinth Walls: Modular 3D stone block assets for building paths.
+	Holes: Dark, void-like 3D depressions on the ground grid.
+	Start/Exit: Clearly marked 3D elements (e.g., glowing portal for exit, pedestal for start).
+o	Background: Sparse, rocky cavern or underground chamber.
+o	UI Elements: Score, Timer display.
+•	Audio:
+o	Background Music: Mystical, slightly eerie, ambient retro track.
+o	Sound Effects:
+	Step: Subtle "clink" or "thud" sound.
+	Falling: Dramatic "whoosh" and "thump" sound.
+	Exit Reached: "ding!" or "success" chime.
+	Game Over: Ominous sting.
+3.3. Game 3: Sky Guardian (Wind Theme)
+•	Genre/Style: Galaga-style top-down shooter with 3D elements.
+•	Core Gameplay Loop: Player controls a "wind whirl" spacecraft at the bottom of the screen, moving horizontally to shoot down waves of "alien" enemies that descend from the top.
+•	Player Character/Control:
+o	Control: Arrow keys (Left/Right) or A/D for horizontal movement. Spacebar or Z key for "wind whirl" attack.
+o	Character: A stylized, ethereal 3D wind-whirl spacecraft or elemental spirit.
+•	Objectives: Destroy incoming alien enemies. Survive as long as possible.
+•	Enemies/Obstacles:
+o	Wind Aliens: Various shapes of low-poly 3D alien models (e.g., stylized birds, cloud monsters) that descend in patterns, occasionally firing small projectiles.
+o	Enemy Projectiles: Simple 3D sphere or cone models representing attacks. Hitting these reduces player health (or is an instant loss condition, depending on difficulty).
+•	Scoring Logic:
+o	Destroying a small alien: +50 points.
+o	Destroying a large alien: +100 points.
+o	Surviving a wave: +200 bonus.
+o	Getting hit by projectile: Game Over (simpler, one-hit death for arcade feel).
+•	Timer: 90 seconds. Game ends when time runs out or player is hit.
+•	Win/Loss Conditions:
+o	Win: Highest score when timer runs out.
+o	Loss: Player is hit by an enemy projectile.
+•	Visuals (Three.js focus):
+o	Overall Aesthetic: Airy, dynamic, fast-paced. Sky environment.
+o	Key Assets:
+	Player Ship: Translucent, swirling 3D wind effect or sleek aircraft.
+	Wind Whirl Attack: A thin, fast-moving 3D cylinder or energy bolt with swirling textures.
+	Aliens: Diverse, stylized 3D alien models with "wind" properties (e.g., flowing lines, cloud-like forms).
+	Enemy Projectiles: Small, simple, fast-moving 3D spheres.
+o	Background: Animated 3D skybox with clouds, possibly moving stars or a distant planet.
+o	UI Elements: Score, Timer display.
+•	Audio:
+o	Background Music: Upbeat, driving, high-energy retro synthwave.
+o	Sound Effects:
+	Player Shot: "whoosh" or "zap" sound.
+	Enemy Explosion: "pop" or "shatter" sound.
+	Enemy Projectile: Distinct "pew" sound.
+	Player Hit: Dramatic "crash" or "game over" sound.
+3.4. Game 4: Hydro Heroes (Water Theme)
+•	Genre/Style: Bomberman-style maze game with fire extinguishing mechanics (3D maze, top-down/isometric).
+•	Core Gameplay Loop: Player is a firefighter in a burning town maze. They must put out fires (using water hose) while avoiding flame monsters that ignite new fires and attack the player.
+•	Player Character/Control:
+o	Control: Arrow keys or on-screen D-pad for movement (Up, Down, Left, Right). Spacebar or Z key to deploy water.
+o	Movement: Grid-based movement.
+o	Character: A low-poly 3D firefighter model.
+•	Objectives: Extinguish all fires. Survive flame monster attacks.
+•	Enemies/Obstacles:
+o	Flame Monsters: Low-poly 3D fire-elemental monsters that patrol the maze, can set houses on fire, and damage the player on contact.
+o	Burning Houses: 3D house models that are on fire (with fire particle effects). Player must target these with water.
+o	Walls: Impassable 3D building walls or obstacles forming the maze.
+•	Scoring Logic:
+o	Extinguishing a fire: +100 points.
+o	Defeating a flame monster: +200 points.
+o	Getting hit by flame monster: -25% health.
+o	New fire ignites: -50 points (or just a negative pressure to put it out quickly).
+•	Timer: 90 seconds. Game ends when time runs out or health reaches 0.
+•	Win/Loss Conditions:
+o	Win: Extinguish all fires (if a finite number) or achieve high score when timer runs out.
+o	Loss: Health reaches 0.
+•	Visuals (Three.js focus):
+o	Overall Aesthetic: Urban, burning, desperate but hopeful.
+o	Key Assets:
+	Player: Simple 3D firefighter model with a hose.
+	Water Blast: A transparent blue cone or stream particle effect from the hose.
+	Flame Monsters: Jagged, glowing 3D fire elemental models.
+	Burning Houses: Low-poly 3D house models with dynamic fire particle effects.
+	Maze Elements: Simple 3D building facades, fences, or rubble.
+o	Background: Distant skyline of a town, possibly with smoke plumes.
+o	UI Elements: Health bar (blue/green), Score display, Timer display.
+•	Audio:
+o	Background Music: Urgent, action-oriented retro track.
+o	Sound Effects:
+	Water Blast: "whoosh" of water.
+	Fire Extinguish: "hiss" or "sizzle" sound.
+	Monster Movement: Low "growl" or "swoosh".
+	Player Hit: "ouch" sound, health reduction sound.
+	House Burning: Subtle crackling fire sound.
+	Game Over: Despairing sting.
+3.5. Game 5: Forest Crossing (Nature Theme)
+•	Genre/Style: Frogger-style top-down game.
+•	Core Gameplay Loop: Player needs to cross a multi-lane highway from the bottom to the top of the screen, avoiding cars and motorcycles moving horizontally. Player moves one space at a time.
+•	Player Character/Control:
+o	Control: Arrow keys or on-screen D-pad for movement (Up, Down, Left, Right).
+o	Movement: Player moves instantly one grid square at a time. Cannot "jump" over vehicles.
+o	Character: A stylized 3D frog or small woodland creature.
+•	Objectives: Reach the forest on the other side. Avoid being hit by vehicles.
+•	Enemies/Obstacles:
+o	Cars/Motorcycles: Various low-poly 3D vehicle models moving at different speeds across lanes. Collision results in loss.
+•	Scoring Logic:
+o	Successfully crossing a lane: +50 points.
+o	Reaching the forest: +500 bonus points.
+o	Getting hit by vehicle: Game Over (no score awarded for that round).
+•	Timer: 90 seconds. Game ends when time runs out or player is hit.
+•	Win/Loss Conditions:
+o	Win: Reaching the forest (top of the screen) within the time limit.
+o	Loss: Getting hit by a vehicle or time running out.
+•	Visuals (Three.js focus):
+o	Overall Aesthetic: Bright, natural, busy.
+o	Key Assets:
+	Player: Cute, low-poly 3D frog or woodland creature.
+	Vehicles: Simple, blocky 3D car and motorcycle models with different colors.
+	Highway Lanes: Flat, textured 3D planes for roads.
+	Medians/Safe Zones: Textured 3D planes with grass/tree textures.
+	Forest Goal: Dense 3D tree models at the top of the screen.
+o	Background: Distant hills or simple skybox.
+o	UI Elements: Score, Timer display.
+•	Audio:
+o	Background Music: Cheerful, upbeat, bouncy retro track.
+o	Sound Effects:
+	Step: Gentle "hop" or "footstep" sound.
+	Vehicle Pass By: Subtle "whoosh" or engine sound.
+	Hit: "splat" or "crash" sound.
+	Lane Crossed: Small "chime" or "ding."
+	Forest Reached: Victorious fanfare.
+	Game Over: Defeated sting.
+4. AI Studio Step-by-Step Tasks
+This section outlines the tasks for an AI Studio to systematically build the game.
+4.1. Project Setup & Core Structure (Task 1)
+Objective: Initialize the React/TypeScript project and establish the foundational folder structure and core Three.js setup.
+•	Folder Structure:
+•	vibe-retro-game-jam/
+•	├── public/
+•	│   └── index.html
+•	├── src/
+•	│   ├── assets/
+•	│   │   ├── audio/
+•	│   │   │   ├── music/
+•	│   │   │   └── sfx/
+•	│   │   └── models/ (for Three.js .gltf, .obj, etc.)
+•	│   ├── components/ (reusable UI components)
+•	│   ├── pages/ (main game screens/levels)
+•	│   │   ├── HomePage.tsx
+•	│   │   ├── FlameFrenzy.tsx (Fire Game)
+•	│   │   ├── StoneLabyrinth.tsx (Stone Game)
+•	│   │   ├── SkyGuardian.tsx (Wind Game)
+•	│   │   ├── HydroHeroes.tsx (Water Game)
+•	│   │   └── ForestCrossing.tsx (Nature Game)
+•	│   ├── services/ (e.g., leaderboard, game logic utilities)
+•	│   │   └── LeaderboardService.ts
+•	│   ├── store/ (state management, e.g., using React Context or Zustand)
+•	│   │   └── GameStore.ts
+•	│   ├── styles/
+•	│   │   └── index.css (for Tailwind CSS setup)
+•	│   ├── utils/ (helper functions, constants)
+•	│   │   └── constants.ts
+•	│   ├── App.tsx
+•	│   ├── index.tsx
+•	│   └── react-app-env.d.ts (TypeScript declaration for React)
+•	├── tailwind.config.js
+•	├── tsconfig.json
+•	├── package.json
+•	└── README.md
+
+•	Files to Create/Initialize:
+o	src/App.tsx: Main React component for routing/rendering pages.
+o	src/index.tsx: React DOM rendering.
+o	src/pages/HomePage.tsx: Initial placeholder for the game selection hub.
+o	src/styles/index.css: Tailwind CSS import and basic global styles.
+o	tailwind.config.js: Tailwind CSS configuration.
+o	tsconfig.json: TypeScript configuration.
+o	package.json: Dependencies (react, react-dom, @types/react, @types/react-dom, three, @types/three, tailwindcss, autoprefixer, postcss).
+4.2. Homepage (Game Selection Hub) Development (Task 2)
+Objective: Implement the interactive 3D homepage using Three.js for asset rendering and React for UI.
+•	Three.js Scene Setup: Create a basic Three.js scene within HomePage.tsx (or a dedicated ThreeScene component imported into it) including camera, renderer, and basic lighting.
+•	3D Asset Integration:
+o	Placeholder 3D models for the 5 elemental symbols and the central treasure chest. Use simple geometries (sphere, box, cone, etc.) for initial development, or simple GLTFLoader imports if assets/models has placeholder .gltf files.
+o	Position these assets in a 5-point star formation.
+•	Interactive Elements: Implement click handlers for each elemental symbol to navigate to its respective game page (placeholder components for now).
+•	UI Overlay: Add a simple React UI overlay for the "Game Jam Showcase" or "Credits" button for the treasure chest.
+•	Background: Basic 3D background (e.g., a simple textured plane or skybox).
+•	Audio: Implement a looping ambient background music track for the homepage.
+4.3. Game 1: Flame Frenzy (Fire) Implementation (Task 3)
+Objective: Develop the core mechanics and visuals for the "Flame Frenzy" game.
+•	src/pages/FlameFrenzy.tsx:
+o	Three.js Scene: Set up a dedicated 3D scene.
+o	Player Input: Implement mouse/touch input for the "flame sword" movement.
+o	Object Spawning: Logic to spawn Gems, Ice Cubes, and Explosives at random intervals from the bottom, moving upwards.
+o	Collision Detection: Implement collision detection between the "flame sword" and spawned objects.
+o	Scoring Logic: Update score based on cuts.
+o	Health System: Implement the health bar for the player and logic for health reduction.
+o	Freeze Mechanic: Logic for the 2-second freeze effect.
+o	Game Timer: Implement the 90-second countdown timer.
+o	Game Over Condition: End game on time out or health depletion.
+o	Visuals:
+	Render placeholder 3D models for Gems, Ice Cubes, Explosives.
+	Implement the "flame sword" visual.
+	Basic particle effects for cutting.
+	Themed 3D background.
+o	Audio: Integrate game-specific background music and SFX (cut, hit, freeze, explosion).
+o	UI: Display score, timer, and health.
+4.4. Game 2: Stone Labyrinth (Stone) Implementation (Task 4)
+Objective: Develop the core mechanics and visuals for the "Stone Labyrinth" game.
+•	src/pages/StoneLabyrinth.tsx:
+o	Three.js Scene: Set up a 3D scene with a top-down or isometric camera.
+o	Grid System: Implement a grid-based movement system for the player.
+o	Labyrinth Generation: Simple procedural generation of a labyrinth with walls and holes, or a static predefined maze.
+o	Player Movement: Implement arrow key/D-pad input for 1-space movement.
+o	Collision Detection: Player-wall collision and player-hole collision.
+o	Scoring Logic: Points for steps and reaching the exit.
+o	Game Timer: 90-second countdown.
+o	Game Over Condition: End game on time out or falling into a hole.
+o	Visuals:
+	Render placeholder 3D models for the player, modular stone walls, and holes.
+	Visual cues for start and exit.
+	Themed 3D background.
+o	Audio: Integrate game-specific background music and SFX (step, fall, win).
+o	UI: Display score, timer.
+4.5. Game 3: Sky Guardian (Wind) Implementation (Task 5)
+Objective: Develop the core mechanics and visuals for the "Sky Guardian" game.
+•	src/pages/SkyGuardian.tsx:
+o	Three.js Scene: Set up a 3D scene with a top-down perspective.
+o	Player Movement: Implement horizontal movement (Left/Right) for the player ship.
+o	Shooting Mechanic: Implement "wind whirl" projectile firing.
+o	Enemy Spawning: Logic to spawn waves of "wind aliens" with predefined movement patterns.
+o	Projectile Movement: Logic for player and enemy projectiles.
+o	Collision Detection: Player projectile-enemy collision, enemy projectile-player collision.
+o	Scoring Logic: Points for destroying aliens.
+o	Game Timer: 90-second countdown.
+o	Game Over Condition: End game on time out or player being hit.
+o	Visuals:
+	Render placeholder 3D models for player ship, wind whirl projectiles, and alien enemies.
+	Themed 3D background (skybox).
+o	Audio: Integrate game-specific background music and SFX (shoot, explosion, hit).
+o	UI: Display score, timer.
+4.6. Game 4: Hydro Heroes (Water) Implementation (Task 6)
+Objective: Develop the core mechanics and visuals for the "Hydro Heroes" game.
+•	src/pages/HydroHeroes.tsx:
+o	Three.js Scene: Set up a 3D scene with a top-down or isometric camera.
+o	Grid System: Implement grid-based movement for the player.
+o	Maze Setup: Create a static or simple procedurally generated maze of houses/obstacles.
+o	Fire Spawning: Logic to randomly ignite houses, and for flame monsters to spread fire.
+o	Player Movement & Action: Implement grid-based movement and "water blast" deployment.
+o	Flame Monster AI: Simple pathfinding or patrol routes for flame monsters.
+o	Collision Detection: Player-monster contact (damage), water-fire (extinguish), water-monster (defeat).
+o	Scoring Logic: Points for extinguishing fires and defeating monsters.
+o	Health System: Implement health bar for the player.
+o	Game Timer: 90-second countdown.
+o	Game Over Condition: End game on time out or health depletion.
+o	Visuals:
+	Render placeholder 3D models for player, burning houses (with fire particles), flame monsters.
+	Water blast visual effect.
+	Themed 3D background.
+o	Audio: Integrate game-specific background music and SFX (water, fire extinguish, monster movement, hit).
+o	UI: Display score, timer, and health.
+4.7. Game 5: Forest Crossing (Nature) Implementation (Task 7)
+Objective: Develop the core mechanics and visuals for the "Forest Crossing" game.
+•	src/pages/ForestCrossing.tsx:
+o	Three.js Scene: Set up a 3D scene with a top-down perspective.
+o	Grid System: Implement grid-based movement for the player.
+o	Lane Setup: Define multiple horizontal lanes with varying speeds and densities of vehicles.
+o	Player Movement: Implement 1-space movement (Up, Down, Left, Right).
+o	Vehicle Movement: Logic for vehicles moving across lanes.
+o	Collision Detection: Player-vehicle collision.
+o	Scoring Logic: Points for crossing lanes and reaching the forest.
+o	Game Timer: 90-second countdown.
+o	Game Over Condition: End game on time out or player being hit.
+o	Visuals:
+	Render placeholder 3D models for the player (frog/creature), cars, and motorcycles.
+	3D environment for highway lanes, medians, and the forest goal.
+	Themed 3D background.
+o	Audio: Integrate game-specific background music and SFX (hop, vehicle pass, hit, win).
+o	UI: Display score, timer.
+4.8. Leaderboard & UI Refinements (Task 8)
+Objective: Implement the leaderboard functionality and polish the overall UI/UX.
+•	src/services/LeaderboardService.ts:
+o	Create functions to add scores, retrieve scores, and clear scores (e.g., using localStorage for simple persistence during the jam).
+•	Integrate Leaderboard:
+o	Modify game over screens to allow score submission (e.g., entering a player name).
+o	Create a dedicated Leaderboard display component (e.g., in src/components/LeaderboardDisplay.tsx).
+o	Link to the Leaderboard from the HomePage (or a central menu).
+•	Pause Menu: Implement a generic pause menu component (src/components/PauseMenu.tsx) to be used across all games.
+•	Volume Controls: Add basic volume sliders for music and SFX (placeholder functionality).
+•	Consistent UI Styling: Apply Tailwind CSS to ensure all buttons, text, and panels adhere to the defined "Look & Feel Standards" (rounded corners, consistent fonts, color palettes).
+4.9. Polish, Optimization & Debugging (Task 9)
+Objective: Final review, performance optimization, and bug fixing.
+•	Cross-Browser Testing: Ensure responsiveness and functionality across different browsers.
+•	Performance: Optimize Three.js scenes (e.g., geometry merging, instancing, light baking if possible for static scenes) for smooth frame rates.
+•	Asset Loading: Implement loading indicators for 3D models and large assets.
+•	Bug Fixing: Address any reported issues from testing.
+•	Sound/Music Loop: Ensure all audio loops seamlessly.
+•	Responsiveness: Verify the UI and game canvases adapt well to different screen sizes (mobile, tablet, desktop).
+This detailed plan should provide an excellent foundation for your Game Jam project! Good luck!

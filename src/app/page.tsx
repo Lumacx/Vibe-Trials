@@ -80,7 +80,7 @@ export default function Home() {
           </Link>
         ))}
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] flex flex-col items-center gap-4">
           <Link href="/credits">
             <button
               className="group transform transition-transform duration-300 hover:scale-110"

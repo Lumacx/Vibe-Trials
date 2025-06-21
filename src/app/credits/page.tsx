@@ -4,11 +4,13 @@ import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@/components/AudioPlayer";
 
 const backgroundMusic = "/music/7_Eternal_Horizon.mp3";
+const volume = 0.15;
 
 export default function CreditsPage() {
   return (
     <>
-    <AudioPlayer src={backgroundMusic} loop={true} />
+    {/* The AudioPlayer component now includes controls and positioning */}
+    <AudioPlayer src={backgroundMusic} volume={volume} />
     <div className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4 text-center">
       <h1 className="font-headline text-6xl font-bold text-primary">
         Credits

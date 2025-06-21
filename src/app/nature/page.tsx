@@ -29,7 +29,7 @@ export default function ForestCrossingPage() {
       <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/223322/00ff00.png?text=Forest+Highway')] bg-cover bg-center" data-ai-hint="highway forest"></div>
       <div className="absolute inset-0 bg-black/30"></div>
       
-      <header className="fixed top-4 left-4 z-50">
+ <header className="fixed top-4 left-4 z-50">
  <AudioPlayer src="/music/6_Pixel_Groove_Adventure.mp3" volume={0.15} />
 
         <Link href="/" passHref>

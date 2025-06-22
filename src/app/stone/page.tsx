@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import * as THREE from 'three';
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { GameUI } from "@/components/game/GameUI";
+import { ArrowLeft } from "lucide-react";
+import AudioPlayer from "@/components/AudioPlayer";
+import * as THREE from 'three'; // Import Three.js
 
 // Define a predefined 10x16 labyrinth grid (0: empty, 1: wall, 2: hole)
 const labyrinthGrid = [
@@ -24,33 +29,31 @@ const GRID_HEIGHT = labyrinthGrid.length;
 const START_POSITION = { x: 1, y: 1 }; // Corresponds to grid index [1][1] - Start position
 const EXIT_POSITION = { x: 14, y: 5 }; // Corresponds to grid index [5][14]
 
-function StoneLabyrinthPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null); // Ref for the canvas element
+export default function StoneLabyrinthPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
-  const [playerPosition, setPlayerPosition] = useState(START_POSITION); // Start position
-  const [gameOver, setGameOver] = useState(false);
-  const [gameWon, setGameWon] = useState(false);
+  const gameCanvasRef = useRef<HTMLDivElement>(null); // Ref for the game canvas container
+  const threeCanvasRef = useRef<HTMLCanvasElement>(null); // Ref for the Three.js canvas element
 
   // Three.js setup and rendering
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!threeCanvasRef.current || !gameCanvasRef.current) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
+      gameCanvasRef.current.clientWidth / gameCanvasRef.current.clientHeight,
       0.1,
       1000
     );
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+    const renderer = new THREE.WebGLRenderer({ canvas: threeCanvasRef.current, antialias: true });
     renderer.setSize(
-      containerRef.current.clientWidth,
-      containerRef.current.clientHeight
+      gameCanvasRef.current.clientWidth,
+      gameCanvasRef.current.clientHeight
     );
+    renderer.setClearColor(0x000000, 0); // Make background transparent
 
-    // Add a simple cube
+    // Add a simple cube (placeholder)
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
@@ -69,119 +72,64 @@ function StoneLabyrinthPage() {
 
     animate();
 
+    // Handle window resize
+    const handleResize = () => {
+      if (!gameCanvasRef.current) return;
+      const width = gameCanvasRef.current.clientWidth;
+      const height = gameCanvasRef.current.clientHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     // Cleanup
     return () => {
       renderer.dispose();
+      window.removeEventListener('resize', handleResize);
     };
   }, []); // Empty dependency array to run only once on mount
 
-  // Handle keyboard input for player movement
+  // Timer logic (keep existing)
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      let newPosition = { ...playerPosition };
-      switch (event.key) {
-        case 'ArrowUp':
-          newPosition.y = Math.max(0, playerPosition.y - 1);
-          break;
-        case 'ArrowDown':
-          newPosition.y = Math.min(GRID_HEIGHT - 1, playerPosition.y + 1);
-          break;
-        case 'ArrowLeft':
-          newPosition.x = Math.max(0, playerPosition.x - 1);
-          break;
-        case 'ArrowRight':
-          newPosition.x = Math.min(GRID_WIDTH - 1, playerPosition.x + 1);
-          break;
-        default:
-          return;
-      }
-      // Check for wall collision (adapt this logic later for Three.js)
-      if (labyrinthGrid[newPosition.y][newPosition.x] !== 1) {
-        setPlayerPosition(newPosition);
-      }
-       event.preventDefault(); // Prevent default scrolling
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [playerPosition, gameOver, gameWon]); // Include relevant dependencies
-
-  // Game loop and logic (timer, hole collision, win condition)
-  useEffect(() => {
-    if (gameOver || gameWon) return;
-
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setGameOver(true);
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
     }, 1000);
 
-    if (labyrinthGrid[playerPosition.y][playerPosition.x] === 2) {
-      setGameOver(true);
-      clearInterval(timer);
-    }
-
-    if (
-      playerPosition.x === EXIT_POSITION.x &&
-      playerPosition.y === EXIT_POSITION.y
-    ) {
-      setGameWon(true);
-      clearInterval(timer);
-    }
-
     return () => clearInterval(timer);
-  }, [playerPosition, gameOver, gameWon]);
-
-  if (gameOver) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-red-900 text-white">
-        <div className="text-lg mb-4">Score: {score}</div>
-        <div className="text-lg mb-4">Time Left: {timeLeft}s</div>
-        <h1 className="text-4xl font-bold mb-4">Game Over!</h1>
-        <p className="text-xl">Time ran out or you fell into a hole.</p>
-        {/* Add retry or return to menu options here */}
-      </div>
-    );
-  }
-
-  if (gameWon) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-green-800 text-white">
-        <h1 className="text-4xl font-bold mb-4">You Won!</h1>
-        <p className="text-xl">You reached the exit!</p>
-        {/* Add score display and potential Web3 interaction here */}\
-      </div>
-    );
-  }
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-stone-800 text-white">
-      <h1 className="text-4xl font-bold mb-8">Stone Labyrinth</h1>
+    <div className="relative h-screen w-screen overflow-hidden bg-stone-900">
+      <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/444444/a020f0.png?text=Stone+Cavern')] bg-cover bg-center" data-ai-hint="stone cavern"></div>
+      <div className="absolute inset-0 bg-black/60"></div>
 
-      <div className="flex justify-between w-full max-w-md mb-4">
-        <div className="text-lg">Score: {score}</div>
-        <div className="text-lg">Time Left: {timeLeft}s</div>
-      </div>
+      <header className="fixed top-4 left-4 z-50">
+        <Link href="/" passHref>
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Hub
+          </Button>
+        </Link>
+      </header>
+      <AudioPlayer src="/music/3_Ancient_Echoes.mp3" />
 
-      {/* Canvas Container */}
-      <div ref={containerRef} className="w-full max-w-md aspect-square bg-gray-700 rounded-lg overflow-hidden shadow-lg">
-        {/* Vanilla Three.js Canvas */}
-        <canvas ref={canvasRef}></canvas>
-      </div>
+      <GameUI score={score} time={timeLeft} />
 
-      <div className="mt-4 text-center">
-        <p>Navigate the labyrinth using arrow keys.</p>
-      </div>
+      <main className="relative z-10 flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-headline text-6xl font-bold text-primary drop-shadow-lg">
+          Stone Labyrinth
+        </h1>
+        {/* Game Canvas Container - Three.js will render here */}
+        <div
+          ref={gameCanvasRef}
+          className="mt-4 h-3/5 w-4/5 max-w-4xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+        >
+           {/* Three.js will render onto this canvas */}
+          <canvas ref={threeCanvasRef} className="w-full h-full"></canvas>
+        </div>
+      </main>
     </div>
   );
 }
-
-export default StoneLabyrinthPage;

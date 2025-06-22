@@ -1,5 +1,4 @@
 "use client";
-import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +7,6 @@ import {
   WindIcon,
   WaterIcon,
   NatureIcon,
-  WalletIcon, // Assuming you have or will create a WalletIcon
   TreasureChestIcon,
 } from "@/components/icons/GameIcons";
 import AudioPlayer from '@/components/AudioPlayer';
@@ -52,54 +50,16 @@ const gameSymbols = [
 ];
 
 export default function Home() {
-  const [account, setAccount] = useState<string | null>(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-  // TODO: Implement global state for connected account using GameStore.ts
-
-  const connectWallet = async () => {
-    setIsConnecting(true);
-    try {
-      const { connect } = await import('starknetkit');
-      const connection = await connect({ modalMode: "always" });
-      if (connection && connection.isConnected) {
-        setAccount(connection.account.address);
-        // Future: Store account in global state (GameStore.ts)
-      } else {
-        console.log("Wallet connection failed or was cancelled.");
-        setAccount(null);
-      }
-    } catch (e) {
-      console.error("Error connecting wallet:", e);
-      setAccount(null);
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-background text-foreground overflow-hidden">
       <AudioPlayer src="/music/1_Celestial_Drift.mp3" volume={0.15} />
     <div className="absolute inset-0 z-0 bg-stars animate-stars" />
       
-      <header className="relative z-10 text-center mb-8 sm:mb-12 flex flex-col items-center">
-        <h1 className="font-headline text-4xl sm:text-6xl font-bold tracking-tighter text-primary">
+ <header className="relative z-10 text-center mb-8 sm:mb-12">
+        <h1 className="font-headline text-5xl sm:text-7xl font-bold tracking-tighter text-primary">
           RetroVibe Arcade
         </h1>
-        {/* Textbox and Connect Wallet Button */}
-        <p className="text-center text-gray-300 max-w-sm mt-4 mb-4 text-sm sm:text-base">
-          Register/Log In to record your scores on the leaderboard for prizes, airdrops and NFTs in competitions
-        </p>
-        {account ? (
-          <div className="flex items-center bg-primary/10 text-primary-foreground px-4 py-2 rounded-full text-sm sm:text-base">
-            <WalletIcon className="w-5 h-5 mr-2" /> {/* Use WalletIcon */}
-            Connected: {account.slice(0, 6)}...{account.slice(-4)}
-          </div>
-        ) : (
-          <Button variant="secondary" onClick={connectWallet} disabled={isConnecting}>
-            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-          </Button>
-        )}
-        <p className="text-muted-foreground mt-8 text-lg sm:text-xl">
+        <p className="text-muted-foreground mt-2 text-lg sm:text-xl">
           Select an element to begin your trial.
         </p>
       </header>
@@ -123,13 +83,18 @@ export default function Home() {
           </Link>
         ))}
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(50%+2rem)] flex flex-col items-center gap-4">
           <Link href="/credits">
             <button
               className="group transform transition-transform duration-300 hover:scale-110"
               aria-label="View Credits"
             >
               <TreasureChestIcon />
+            </button>
+          </Link>
+          <Link href="/leaderboard" passHref>
+            <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+              Leaderboard
             </Button>
           </Link>
         </div>

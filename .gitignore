@@ -128,3 +128,11 @@ src/app/Vibe_Trials/contract/src/models/player.cairo
 src/app/Vibe_Trials/contract/src/systems/game.cairo
 src/app/Vibe_Trials/contract/src/tests/test_game.cairo
 src/app/Vibe_Trials/contract/src/tests/utils.cairo
+src/app/Vibe_Trials/client/src/components/AudioPlayer.tsx
+src/app/Vibe_Trials/client/src/components/CanvasScene.tsx
+src/app/Vibe_Trials/client/src/components/StoneCanvasWrapper.tsx
+src/app/Vibe_Trials/client/src/components/ThreeScene.tsx
+src/app/Vibe_Trials/client/src/components/game/GameLayout.tsx
+src/app/Vibe_Trials/client/src/components/game/GameUI.tsx
+src/app/Vibe_Trials/client/src/components/icons/GameIcons.tsx
+src/app/Vibe_Trials/client/src/components/pages/Homepage.tsx

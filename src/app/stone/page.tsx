@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from "react";
+import { Howl } from 'howler';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GameUI } from "@/components/game/GameUI";
@@ -34,7 +35,6 @@ const HOLE_VALUE = 2;
 type GameState = 'playing' | 'win' | 'lose-time' | 'lose-hole' | 'lose';
 
 export default function StoneLabyrinthPage() {
-  const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
   const [lives, setLives] = useState(3);
 
@@ -54,6 +54,34 @@ export default function StoneLabyrinthPage() {
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
 
+  // Sound effects
+  const playerStepSound = useRef<Howl | null>(null);
+  const fallingHoleSound = useRef<Howl | null>(null);
+  const exitDingSound = useRef<Howl | null>(null);
+  const gameOverSound = useRef<Howl | null>(null);
+
+  useEffect(() => {
+    // Ensure Howler is loaded before creating sounds
+    if (typeof Howl === 'undefined') return;
+    // Initialize sounds
+    playerStepSound.current = new Howl({
+      src: ['/sfx/Player_Step.mp3'],
+      volume: 0.25,
+    });
+    fallingHoleSound.current = new Howl({
+      src: ['/sfx/Falling_into_Hole.mp3'],
+      volume: 0.25,
+    });
+    exitDingSound.current = new Howl({
+      src: ['/sfx/Exit_ding.mp3'],
+      volume: 0.25,
+
+    });
+    gameOverSound.current = new Howl({
+      src: ['/sfx/Game_Over_Ominous.mp3'],
+      volume: 0.25, // Set initial volume to half of 0.5 (0.25)
+    });
+  }, []);
   // Function to generate a random labyrinth grid with a guaranteed path
   const generateLabyrinth = () => {
     let newGrid: number[][] = [];
@@ -137,18 +165,71 @@ export default function StoneLabyrinthPage() {
 
   const renderLabyrinth = (grid: number[][]) => {
     if (!sceneRef.current) return;
-
-    // Clear previous labyrinth elements (walls, ground, holes, exit marker)
-    sceneRef.current.children = sceneRef.current.children.filter(obj =>
-      !(obj instanceof THREE.Mesh && (obj.material as THREE.MeshStandardMaterial).color.getHex() === 0x8B4513) && // Walls
-      !(obj instanceof THREE.Mesh && (obj.material as THREE.MeshStandardMaterial).map) && // Ground
-      !(obj instanceof THREE.Mesh && (obj.material as THREE.MeshStandardMaterial).color.getHex() === 0x222222) && // Holes
-      !(obj instanceof THREE.Mesh && (obj.material as THREE.MeshBasicMaterial).color.getHex() === 0x00ff00) // Exit Marker
+  
+    // Limpiar laberinto anterior
+    sceneRef.current.children = sceneRef.current.children.filter(
+      obj => !(obj.userData && obj.userData.type === 'labyrinth-tile')
     );
-
-    // Render the new grid... (rest of the rendering logic for walls, ground, holes, exit)
-    // This part needs to be adapted from the initial useEffect rendering loop
+  
+    for (let y = 0; y < GRID_HEIGHT; y++) {
+      for (let x = 0; x < GRID_WIDTH; x++) {
+        const value = grid[y][x];
+        const posX = (x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE;
+        const posZ = (y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE;
+  
+        // Piso base
+        const groundGeometry = new THREE.BoxGeometry(TILE_SIZE, 0.1, TILE_SIZE);
+        // 🪨 Suelo de piedra desgastada
+        const groundMaterial = new THREE.MeshStandardMaterial({
+          color: 0x5C4438,      // Marrón medio tipo tierra/piedra antigua
+          roughness: 0.9,
+          metalness: 0.05,
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.position.set(posX, 0, posZ);
+        ground.userData.type = 'labyrinth-tile';
+        sceneRef.current.add(ground);
+  
+        if (value === WALL_VALUE) {
+          const wallGeometry = new THREE.BoxGeometry(TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          // 🧱 Pared de piedra (oscura, sólida)
+          const wallMaterial = new THREE.MeshStandardMaterial({
+            color: 0x3B2F2F,      // Marrón profundo tipo roca
+            roughness: 0.8,
+            metalness: 0.1,
+          });
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.position.set(posX, TILE_SIZE / 2, posZ);
+          wall.userData.type = 'labyrinth-tile';
+          sceneRef.current.add(wall);
+        } else if (value === HOLE_VALUE) {
+          const holeGeometry = new THREE.CylinderGeometry(TILE_SIZE / 2, TILE_SIZE / 2, 0.05, 32);
+          // 🕳️ Hueco (casi igual al suelo pero más apagado)
+          const holeMaterial = new THREE.MeshStandardMaterial({
+            color: 0x4A3F38,      // Café grisáceo oscuro, casi se camufla
+            roughness: 1.0,
+            metalness: 0.0,
+            });
+          const hole = new THREE.Mesh(holeGeometry, holeMaterial);
+          hole.rotation.x = -Math.PI / 2;
+          hole.position.set(posX, 0.05, posZ);
+          hole.userData.type = 'labyrinth-tile';
+          sceneRef.current.add(hole);
+        }
+  
+        // Marcar salida
+        if (x === EXIT_POSITION.x && y === EXIT_POSITION.y) {
+          const exitGeometry = new THREE.BoxGeometry(TILE_SIZE * 0.8, 0.2, TILE_SIZE * 0.8);
+          const exitMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+          const exit = new THREE.Mesh(exitGeometry, exitMaterial);
+          exit.position.set(posX, 0.1, posZ);
+          exit.userData.type = 'labyrinth-tile';
+          sceneRef.current.add(exit);
+        }
+      }
+    }
   };
+  
   useEffect(() => {
     // Initialize Three.js scene, camera, and renderer here
     const scene = new THREE.Scene();
@@ -164,7 +245,7 @@ export default function StoneLabyrinthPage() {
     // This effect should only run once on component mount
     // Player
     const playerGeometry = new THREE.BoxGeometry(TILE_SIZE * 0.8, TILE_SIZE * 0.8, TILE_SIZE * 0.8);
-    const playerMaterial = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00ffff, emissiveIntensity: 0.8 });
+    const playerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
     const player = new THREE.Mesh(playerGeometry, playerMaterial);
     player.position.set(
       (START_POSITION.x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE,
@@ -360,6 +441,7 @@ export default function StoneLabyrinthPage() {
       // Check for collision with walls and move if not a wall
       if (targetGridValue !== 1) {
         setIsFalling(false); // Reset falling state on valid move
+        playerStepSound.current?.play(); // Play step sound on successful move
         // Update player position state
         setPlayerPosition(newPosition);
 
@@ -378,12 +460,14 @@ export default function StoneLabyrinthPage() {
       // Check for win condition after updating position
       if (newPosition.x === EXIT_POSITION.x && newPosition.y === EXIT_POSITION.y && gameState === 'playing') {
         setGameState('win');
+        exitDingSound.current?.play(); // Play exit ding sound
       }
     };
     
     // Check if the player has fallen into a hole after the position update
     const currentPlayerGridValue = labyrinthGrid[playerPosition.y][playerPosition.x];
     if (currentPlayerGridValue === HOLE_VALUE && gameState === 'playing') {
+ fallingHoleSound.current?.play(); // Play falling sound
       setGameState('lose-hole');
       setIsFalling(true);
       if (playerRef.current) {
@@ -408,11 +492,11 @@ export default function StoneLabyrinthPage() {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
-          // Time's up!
- if (gameState === 'playing') { // Ensure game is still playing before ending
+          if (gameState === 'playing') {
+            gameOverSound.current?.play(); // 👈 Agrega el sonido aquí también
             setGameState('lose-time');
             clearInterval(timer);
- return 0; // Ensure time does not go below zero
+            return 0;
           }
         }
         return prevTime - 1;
@@ -439,6 +523,7 @@ export default function StoneLabyrinthPage() {
       }, 1500); // Short delay before restarting
       return () => clearTimeout(lifeLostTimer);
     } else if (gameState === 'lose-hole' && lives === 0) {
+      gameOverSound.current?.play(); // Play game over sound
       setGameState('lose'); // Final lose condition
       labyrinthGrid = generateLabyrinth(); // Randomize labyrinth on final lose
       renderLabyrinth(labyrinthGrid); // Render the new labyrinth
@@ -468,7 +553,7 @@ export default function StoneLabyrinthPage() {
       
             {/* Right: Game UI */}
             <div className="flex items-center justify-end w-1/3">
-              <GameUI score={score} time={timeLeft} lives={lives} />
+              <GameUI score={timeLeft*lives} time={timeLeft} lives={lives} />
             </div>
           </div>
         }
@@ -507,7 +592,7 @@ export default function StoneLabyrinthPage() {
             <div className="bg-black/70 p-4 rounded-lg max-w-xs">
               <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
               <p>Arrow Keys: Move 1 space</p>
-              <p>Drag Mouse: Rotate View</p>
+              <p>Zoom in/out: Mouse wheel</p>
             </div>
           </>
         }
@@ -535,3 +620,5 @@ export default function StoneLabyrinthPage() {
     </>
   );
 }
+
+

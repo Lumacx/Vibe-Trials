@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface AudioPlayerProps {
   src: string;
@@ -9,6 +10,12 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, volume = 0.15, loop = true }) => {
+
+  const pathname = usePathname();
+
+  // Páginas donde debe estar abajo a la derecha
+  const isBottomPage = pathname === '/' || pathname === '/leaderboard' || pathname === '/credits';
+
   const [currentVolume, setCurrentVolume] = useState(volume);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -47,8 +54,19 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, volume = 0.15, loop = tr
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center space-x-2 bg-black/50 p-2 rounded-lg">
-      <button onClick={toggleMute} className="p-2 rounded-full bg-purple-600 text-white text-sm hover:bg-purple-700 transition">
+    <div
+      className={`z-50 flex items-center space-x-2 bg-black/50 rounded-md border border-purple-500 
+        ${isBottomPage
+          ? 'fixed bottom-4 right-4'
+        //absolute top-8 removido de abajo por relative
+          : 'relative left-1/2 transform -translate-x-1/2'}
+        h-10 px-2`
+      }
+    >
+      <button
+        onClick={toggleMute}
+        className="h-8 w-8 flex items-center justify-center rounded-md bg-purple-600 text-white text-sm hover:bg-purple-700 transition"
+      >
         {isMuted ? '🔇' : '🔊'}
       </button>
       <input
@@ -58,7 +76,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, volume = 0.15, loop = tr
         step="0.01"
         value={isMuted ? 0 : currentVolume}
         onChange={handleVolumeChange}
-        className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+        className="h-2 w-24 appearance-none rounded bg-gray-300 dark:bg-gray-700 cursor-pointer"
       />
       <audio
         ref={audioRef}
@@ -68,6 +86,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, volume = 0.15, loop = tr
       />
     </div>
   );
+  
 };
 
 export default AudioPlayer;

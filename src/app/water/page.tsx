@@ -11,7 +11,7 @@ export default function HydroHeroesPage() {
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(100);
   const [timeLeft, setTimeLeft] = useState(90);
-  const [audio] = useState(typeof Audio !== 'undefined' ? new Audio('/src/assets/audio/music/5_Chasing_Shadows.mp3') : undefined);
+  const [audio] = useState(typeof Audio !== 'undefined' ? new Audio('/music/5_Chasing_Shadows.mp3') : undefined);
 
   useEffect(() => {
     const timer = setInterval(() => {

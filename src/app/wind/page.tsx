@@ -12,7 +12,7 @@ export default function SkyGuardianPage() {
   const [timeLeft, setTimeLeft] = useState(90);
   const [audio] = useState(
     typeof Audio !== "undefined"
-      ? new Audio('/home/user/studio/src/assets/audio/music/4_Neon_Horizons.mp3')
+      ? new Audio('/music/4_Neon_Horizons.mp3')
       : undefined
   );
 

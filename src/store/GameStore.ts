@@ -1,22 +1,28 @@
-// This file can be used for global state management (e.g., using React Context or Zustand).
-// It could manage things like current game state, player name, audio settings, etc.
+import { create } from 'zustand';
+import { AccountInterface } from 'starknet';
 
-// Example with Zustand:
-// import create from 'zustand';
-//
-// interface GameState {
-//   playerName: string;
-//   setPlayerName: (name: string) => void;
-//   musicVolume: number;
-//   sfxVolume: number;
-// }
-//
-// export const useGameStore = create<GameState>((set) => ({
-//   playerName: 'Player1',
-//   setPlayerName: (name) => set({ playerName: name }),
-//   musicVolume: 0.5,
-//   sfxVolume: 0.8,
-// }));
+interface GameStoreState {
+  connectedAccount: AccountInterface | null;
+  isConnected: boolean;
+  // Add your game state variables here
+  // Example: score: number;
+}
 
-// Placeholder export to make the file a module
-export {};
+interface GameStoreActions {
+  setConnectedAccount: (account: AccountInterface | null) => void;
+  // Add your game state actions here
+  // Example: incrementScore: (amount: number) => void;
+}
+
+type GameStore = GameStoreState & GameStoreActions;
+
+export const useGameStore = create<GameStore>((set) => ({
+  connectedAccount: null,
+  isConnected: false,
+  setConnectedAccount: (account) => set({ connectedAccount: account, isConnected: !!account }),
+  // Initialize your game state variables here
+  // Example: score: 0,
+
+// Implement your game state actions here
+  // Example: incrementScore: (amount) => set((state) => ({ score: state.score + amount})),
+}));

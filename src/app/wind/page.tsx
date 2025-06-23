@@ -7,6 +7,7 @@ import { GameUI } from "@vibe-components/game/GameUI";
 import AudioPlayer from "@vibe-components/AudioPlayer";
 import { ArrowLeft } from 'lucide-react';
 
+import GameLayout from '@vibe-components/game/GameLayout'; // Assuming GameLayout is in this path
 export default function SkyGuardianPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);

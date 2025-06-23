@@ -10,6 +10,7 @@ import {
   TreasureChestIcon,
 } from "@vibe-components/icons/GameIcons";
 import AudioPlayer from '@vibe-components/AudioPlayer';
+import { useStarknetConnect } from '../dojo/useStarknetConnect'; // Import the useStarknetConnect hook
 
 const gameSymbols = [
   {
@@ -50,6 +51,8 @@ const gameSymbols = [
 ];
 
 export default function Home() {
+  const { status, address, isConnecting, handleConnect, handleDisconnect } = useStarknetConnect();
+
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-background text-foreground overflow-hidden">
       <AudioPlayer src="/music/1_Celestial_Drift.mp3" volume={0.15} />
@@ -59,7 +62,25 @@ export default function Home() {
         <h1 className="font-headline text-5xl sm:text-7xl font-bold tracking-tighter text-primary">
           RetroVibe Arcade
         </h1>
+        {/* Textbox and Connect Wallet Button */}
         <p className="text-muted-foreground mt-2 text-lg sm:text-xl">
+          Register/Log In to record your scores on the leaderboard for prizes, airdrops and NFTs in competitions
+        </p>
+        {/* Wallet Connection UI */}
+        <div className="mt-4 mb-4">
+          {address ? (
+            <div className="flex items-center bg-primary/10 text-primary-foreground px-4 py-2 rounded-full text-sm sm:text-base cursor-pointer" onClick={handleDisconnect}>
+              {/* Assuming you have a Wallet icon component available */}
+              {/* <Wallet className="w-5 h-5 mr-2" /> */}
+              Connected: {address.slice(0, 6)}...{address.slice(-4)}
+            </div>
+          ) : (
+            <Button variant="outline" onClick={handleConnect} disabled={isConnecting}>
+              {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+            </Button>
+          )}
+        </div>
+ <p className="text-muted-foreground mt-2 text-lg sm:text-xl">
           Select an element to begin your trial.
         </p>
       </header>
@@ -92,7 +113,7 @@ export default function Home() {
               <TreasureChestIcon />
             </button>
           </Link>
-          <Link href="/leaderboard" passHref>
+          <Link href="/leaderboard">
             <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
               Leaderboard
             </Button>

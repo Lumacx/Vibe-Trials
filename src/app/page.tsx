@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
+import { Button } from "@vibe-components/ui/button";
 import {
   FireIcon,
   StoneIcon,
@@ -8,8 +8,8 @@ import {
   WaterIcon,
   NatureIcon,
   TreasureChestIcon,
-} from "@/components/icons/GameIcons";
-import AudioPlayer from '@/components/AudioPlayer';
+} from "@vibe-components/icons/GameIcons";
+import AudioPlayer from '@vibe-components/AudioPlayer';
 
 const gameSymbols = [
   {

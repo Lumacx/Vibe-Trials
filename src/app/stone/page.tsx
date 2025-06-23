@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Howl } from 'howler';
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { GameUI } from "@/components/game/GameUI";
+import { Button } from "@vibe-components/ui/button";
+import { GameUI } from "@vibe-components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
-import AudioPlayer from "@/components/AudioPlayer";
+import AudioPlayer from "@vibe-components/AudioPlayer";
 import * as THREE from 'three'; // Import Three.js
-import GameLayout from "@/components/game/GameLayout";
+import GameLayout from "@vibe-components/game/GameLayout";
 
 // Define a predefined 10x16 labyrinth grid (0: ground, 1: wall, 2: hole)
 let labyrinthGrid = [

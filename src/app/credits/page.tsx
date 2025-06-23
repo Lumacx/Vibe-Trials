@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@vibe-components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import AudioPlayer from "@/components/AudioPlayer";
+import AudioPlayer from "@vibe-components/AudioPlayer";
 
 const backgroundMusic = "/music/7_Eternal_Horizon.mp3";
 const volume = 0.15;

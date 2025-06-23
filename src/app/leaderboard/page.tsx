@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@vibe-components/ui/button";
 import {
   Table,
   TableBody,
@@ -7,9 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AudioPlayer from "@/components/AudioPlayer";
+} from "@vibe-components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vibe-components/ui/tabs";
+import AudioPlayer from "@vibe-components/AudioPlayer";
 import { ArrowLeft } from "lucide-react";
 
 const backgroundMusic = "/music/7_Eternal_Horizon.mp3";

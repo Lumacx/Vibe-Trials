@@ -1,10 +1,10 @@
 "use client";
 
-import AudioPlayer from "@/components/AudioPlayer"; // Corrected import path
+import AudioPlayer from "@vibe-components/AudioPlayer"; // Corrected import path
 import Link from 'next/link';
-import GameUI from "@/components/game/GameUI";
+import GameUI from "@vibe-components/game/GameUI";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@vibe-components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import AudioPlayer from "@/components/AudioPlayer";
+import AudioPlayer from "@vibe-components/AudioPlayer";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { GameUI } from "@/components/game/GameUI";
+import { Button } from "@vibe-components/ui/button";
+import { GameUI } from "@vibe-components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
 
 export default function ForestCrossingPage() {

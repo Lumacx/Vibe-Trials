@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { GameUI } from "@/components/game/GameUI";
-import AudioPlayer from "@/components/AudioPlayer";
+import { Button } from "@vibe-components/ui/button";
+import { GameUI } from "@vibe-components/game/GameUI";
+import AudioPlayer from "@vibe-components/AudioPlayer";
 import { ArrowLeft } from 'lucide-react';
 
 export default function SkyGuardianPage() {

@@ -438,11 +438,16 @@ export default function ForestCrossingPage() {
               Forest Crossing
             </h1>
             <div
-              ref={gameCanvasRef}
-              className="relative w-full max-w-screen-lg rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
-              style={{ height: 'calc(70vh - 2rem)', aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}` }}
-            >
-              <canvas ref={threeCanvasRef} className="w-full h-full block" />
+            ref={gameCanvasRef}
+            className="relative mx-auto rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+              style={{
+                height: 'calc(70vh - 2rem)',
+                aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`,
+                maxWidth: '100%',      // Prevents overflow on small screens
+                maxHeight: '100%',     // Prevents overflow on small screens
+                }}
+                >
+            <canvas ref={threeCanvasRef} className="w-full h-full block" />
             </div>
           </div>
         }

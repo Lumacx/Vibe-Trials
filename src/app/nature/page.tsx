@@ -8,10 +8,9 @@ import { Button } from "@vibe-components/ui/button";
 import { GameUI } from "@vibe-components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
 import * as THREE from 'three';
-
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Add this line
 
 import GameLayout from '@vibe-components/game/GameLayout';
-
 // Define grid dimensions and tile size
 const GRID_WIDTH = 16;
 
@@ -62,12 +61,14 @@ export default function ForestCrossingPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [gameState, setGameState] = useState<GameState>('playing');
-  const [playerPosition, setPlayerPosition] = useState(PLAYER_START_POSITION);
+  // Changed from useState to useRef for playerPosition
+  const playerPositionRef = useRef(PLAYER_START_POSITION);
 
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  // const [vehicles, setVehicles] = useState<Vehicle[]>([]); // Remove this line
+  const vehiclesRef = useRef<Vehicle[]>([]); // Add this line
 
-  const gameCanvasRef = useRef<HTMLDivElement>(null);
-  const threeCanvasRef = useRef<HTMLCanvasElement>(null);
+  // Changed from threeCanvasRef to gameAreaRef for consistency with wind/page.tsx
+  const gameAreaRef = useRef<HTMLDivElement>(null);
 
   const playerRef = useRef<THREE.Mesh | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -84,14 +85,39 @@ export default function ForestCrossingPage() {
   const forestReachedSound = useRef<Howl | null>(null);
   const gameOverSound = useRef<Howl | null>(null);
 
+  const [playerLives, setPlayerLives] = useState(2); // Add state for player lives
+
+// *** Define handlePlayerHit function here ***
+const handlePlayerHit = () => {
+  setPlayerLives(prevLives => {
+    const newLives = prevLives - 1;
+    if (newLives <= 0) {
+      gameOverSound.current?.play();
+      setGameState('lose-hit');
+    } else {
+      // Reset player position
+      playerPositionRef.current = PLAYER_START_POSITION;
+      if (playerRef.current) {
+        playerRef.current.position.set(
+          (playerPositionRef.current.x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE,
+          TILE_SIZE * 0.5,
+          (playerPositionRef.current.y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE
+        );
+      }
+    }
+    return newLives;
+  });
+};
+// *** End of handlePlayerHit function ***
+
   useEffect(() => {
     if (typeof Howl === 'undefined') return;
     playerHopSound.current = new Howl({ src: ['/sfx/Frog_Hop.mp3'], volume: 0.25 });
     vehiclePassSound.current = new Howl({ src: ['/sfx/Vehicle_Pass_1.mp3', '/sfx/Vehicle_Pass_2.mp3', '/sfx/Vehicle_Pass_3.mp3'], volume: 0.1 });
-    playerHitSound.current = new Howl({ src: ['/sfx/Frog_splat_1.mp3', '/sfx/Frog_splat_2.mp3', '/sfx/Frog_splat_3.mp3', '/sfx/Frog_splat_4.mp3'], volume: 0.5 });
+    playerHitSound.current = new Howl({ src: ['/sfx/Frog_splat_1.mp3', '/sfx/Frog_splat_2.mp3', '/sfx/Frog_splat_3.mp3', '/sfx/Frog_splat_4.mp3'], volume: 0.3 });
     laneCrossedSound.current = new Howl({ src: ['/sfx/Lane_Crossed_chime.mp3'], volume: 0.2 });
     forestReachedSound.current = new Howl({ src: ['/sfx/Forest_Victory1.mp3', '/sfx/Forest_Victory2.mp3', '/sfx/Forest_Victory3.mp3'], volume: 0.3 });
-    gameOverSound.current = new Howl({ src: ['/sfx/Game_Over_Defeated.mp3'], volume: 0.25 });
+    gameOverSound.current = new Howl({ src: ['/sfx/Game_Over_Defeated.mp3'], volume: 0.08 });
   }, []);
 
   const renderEnvironment = (grid: number[][]) => {
@@ -104,13 +130,13 @@ export default function ForestCrossingPage() {
       obj => !(obj.userData && obj.userData.type === 'environment-tile')
     );
 
-    const tileGeometry = new THREE.BoxGeometry(TILE_SIZE, 0.1, TILE_SIZE);
+    // Make the tile geometry thinner
+  const tileGeometry = new THREE.BoxGeometry(TILE_SIZE, 0.05, TILE_SIZE); // Reduced height
 
-    for (let y = GRID_HEIGHT - 1; y >= 0; y--) {
-      for (let x = 0; x < GRID_WIDTH; x++) {
+  for (let y = GRID_HEIGHT - 1; y >= 0; y--) {
+    for (let x = 0; x < GRID_WIDTH; x++) {
  console.log("Rendering tile at x:", x, "y:", y);
  console.log("Grid value at [", y, "][", x, "]:", grid[y][x]);
-
 
         const value = grid[y][x];
         let material;
@@ -131,7 +157,7 @@ export default function ForestCrossingPage() {
 
         tile.position.set(
           (x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE,
-          0,
+          -0.025, // Position slightly below y=0 to avoid z-fighting with player/vehicles
           (y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE
         );
         tile.userData.type = 'environment-tile';
@@ -141,16 +167,16 @@ export default function ForestCrossingPage() {
   };
 
   useEffect(() => {
-    const canvasContainer = gameCanvasRef.current;
+    const canvasContainer = gameAreaRef.current; // Use gameAreaRef here
     if (!canvasContainer) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    renderer.setSize(gameCanvasRef.current.clientWidth, gameCanvasRef.current.clientHeight);
-    gameCanvasRef.current.appendChild(renderer.domElement);
-    //threeCanvasRef.current = renderer.domElement;
+    // Append the renderer's DOM element directly to the container
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    canvasContainer.appendChild(renderer.domElement);
 
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -158,18 +184,21 @@ export default function ForestCrossingPage() {
 
     renderEnvironment(gameGrid);
 
-    const playerGeometry = new THREE.BoxGeometry(TILE_SIZE * 0.8, TILE_SIZE * 0.8, TILE_SIZE * 0.8);
+  const playerGeometry = new THREE.BoxGeometry(TILE_SIZE * 0.8, TILE_SIZE * 0.8, TILE_SIZE * 0.8);
     const playerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const player = new THREE.Mesh(playerGeometry, playerMaterial);
 
-     player.position.set(
-      (playerPosition.x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE,
-      TILE_SIZE / 2,
-      (playerPosition.y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE
-     );
+    // Initial player position using playerPositionRef.current
+    player.position.set(
+      (playerPositionRef.current.x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE,
+      TILE_SIZE * 0.5,
+      (playerPositionRef.current.y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE
+    );
 
-    scene.add(player);
-    playerRef.current = player;
+
+  scene.add(player);
+  playerRef.current = player;
+  //console.log("Scene children after adding player:", scene.children); // remove this line *if works*
 
     const ambientLight = new THREE.AmbientLight(0xaaaaaa);
     scene.add(ambientLight);
@@ -181,68 +210,89 @@ export default function ForestCrossingPage() {
     camera.position.set(0, GRID_HEIGHT * TILE_SIZE, 0);
     camera.lookAt(0, 0, 0);
 
+    //** remove if it works
+    //const helper = new THREE.CameraHelper( camera );
+    //scene.add( helper );
+
+   // const controls = new OrbitControls(camera, renderer.domElement);
+   // controls.update(); // required if controls.enableDamping or controls.autoRotate are set to true
+    //** remove if it works
 
     let lastTime = 0;
-    const animate = (currentTime: number) => {
-      if (gameState !== 'playing') {
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-        return;
-      }
+const animate = (currentTime: number) => {
+  requestAnimationFrame(animate); // Keep the animation loop running
 
-      requestAnimationFrame(animate);
+  const deltaTime = (currentTime - lastTime) / 1000;
+  lastTime = currentTime;
 
-      const deltaTime = (currentTime - lastTime) / 1000;
-      lastTime = currentTime;
+  if (gameState === 'playing') {
+    // Update player mesh position using playerPositionRef.current
+    if (playerRef.current) {
+      playerRef.current.position.x = (playerPositionRef.current.x - GRID_WIDTH / 2 + 0.5) * TILE_SIZE;
+      playerRef.current.position.z = (playerPositionRef.current.y - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE;
+      // console.log("Player position:", playerRef.current.position); // Keep this log if you want to see player movement logs
+    }
 
-      setVehicles(prevVehicles => prevVehicles.filter(v => v.mesh !== null));
+      // *** VEHICLE UPDATE LOGIC ***
+      //console.log("Number of vehicles in vehiclesRef.current:", vehiclesRef.current.length); // Update this log
 
-      const vehicleMeshes = vehicles.map(v => v.mesh).filter(mesh => mesh !== null);
-      if (playerRef.current) {
-        const playerBox = new THREE.Box3().setFromObject(playerRef.current);
+      const updatedVehicles: Vehicle[] = [];
+      vehiclesRef.current.forEach(vehicle => { // Iterate over vehiclesRef.current
+        if (!vehicle.mesh) return;
 
-        for (const vehicle of vehicles) {
-          if (!vehicle.mesh) continue;
-          const vehicleBox = new THREE.Box3().setFromObject(vehicle.mesh);
-          if (playerBox.intersectsBox(vehicleBox)) {
-            if (gameState === 'playing') {
-              playerHitSound.current?.play();
-              setGameState('lose-hit');
-            }
-            break;
+        // Create a new vehicle object with the updated gridX
+        const updatedVehicle = {
+          ...vehicle,
+          gridX: vehicle.gridX + vehicle.speed * deltaTime,
+        };
+
+        updatedVehicle.mesh.position.x = (updatedVehicle.gridX - GRID_WIDTH / 2 + 0.5) * TILE_SIZE;
+        console.log(`Vehicle ID: ${updatedVehicle.id}, gridX: ${updatedVehicle.gridX}, mesh.position.x: ${updatedVehicle.mesh.position.x}`);
+
+        // Despawning logic
+        if ((updatedVehicle.speed > 0 && updatedVehicle.gridX > GRID_WIDTH) || (updatedVehicle.speed < 0 && updatedVehicle.gridX < -1.5 * GRID_WIDTH)) {
+           sceneRef.current?.remove(updatedVehicle.mesh);
+           updatedVehicle.mesh.geometry?.dispose();
+           (updatedVehicle.mesh.material as THREE.Material).dispose();
+        } else {
+           updatedVehicles.push(updatedVehicle);
+        }
+      });
+       // Update vehiclesRef.current directly
+       vehiclesRef.current = updatedVehicles;
+
+
+      // *** COLLISION DETECTION ***
+    if (playerRef.current) {
+      const playerBox = new THREE.Box3().setFromObject(playerRef.current);
+
+      for (const vehicle of vehiclesRef.current) { // Iterate over vehiclesRef.current
+        if (!vehicle.mesh) continue;
+        const vehicleBox = new THREE.Box3().setFromObject(vehicle.mesh);
+        if (playerBox.intersectsBox(vehicleBox)) {
+          if (gameState === 'playing') {
+            playerHitSound.current?.play();
+            handlePlayerHit(); // Call a new function to handle player hit
+            break; // Exit the loop after a collision
           }
         }
       }
+    }
 
-      if (currentTime - lastSpawnTimeRef.current > 1500) { // Adjust spawn rate
+      if (currentTime - lastSpawnTimeRef.current > 800) {
          spawnVehicle();
          lastSpawnTimeRef.current = currentTime;
       }
+    }
 
-      const updatedVehicles: Vehicle[] = [];
-      vehicles.filter(v => v.mesh !== null).forEach(vehicle => {
-        vehicle.gridX += vehicle.speed * deltaTime;
-
-        vehicle.mesh.position.x = (vehicle.gridX - GRID_WIDTH / 2 + 0.5) * TILE_SIZE;
-
-        if ((vehicle.speed > 0 && vehicle.gridX > GRID_WIDTH) || (vehicle.speed < 0 && vehicle.gridX < -1.5 * GRID_WIDTH)) {
-           scene.remove(vehicle.mesh);
-           vehicle.mesh.geometry?.dispose();
-           (vehicle.mesh.material as THREE.Material).dispose();
-        } else {
-           updatedVehicles.push(vehicle);
-        }
-      });
-       setVehicles(updatedVehicles);
-
-      renderer.render(scene, camera);
-    };
-    animate(0);
+    renderer.render(scene, camera);
+  };
+ animate(0);
 
     const handleResize = () => {
-      if (rendererRef.current && cameraRef.current && gameCanvasRef.current) {
-        const width = gameCanvasRef.current.clientWidth;
-        const height = gameCanvasRef.current.clientHeight;
+      if (rendererRef.current && cameraRef.current && gameAreaRef.current) { // Use gameAreaRef here
+        const width = gameAreaRef.current.clientWidth;
+        const height = gameAreaRef.current.clientHeight;
         rendererRef.current.setSize(width, height);
         cameraRef.current.aspect = width / height;
         cameraRef.current.updateProjectionMatrix();
@@ -253,8 +303,8 @@ export default function ForestCrossingPage() {
         handleResize();
     });
 
-    if (gameCanvasRef.current) {
-        resizeObserver.observe(gameCanvasRef.current);
+    if (gameAreaRef.current) { // Use gameAreaRef here
+        resizeObserver.observe(gameAreaRef.current);
     }
 
     window.addEventListener('resize', handleResize);
@@ -273,8 +323,9 @@ export default function ForestCrossingPage() {
         }
       });
       renderer.dispose();
-       if (threeCanvasRef.current && threeCanvasRef.current.parentNode) {
-          threeCanvasRef.current.parentNode.removeChild(threeCanvasRef.current);
+       // Remove the renderer's DOM element from the container
+       if (canvasContainer && renderer.domElement && canvasContainer.contains(renderer.domElement)) {
+          canvasContainer.removeChild(renderer.domElement);
        }
     };
   }, [gameState]);
@@ -287,40 +338,44 @@ export default function ForestCrossingPage() {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
-          if (gameState === 'playing') {
+          if (gameState === 'playing' && playerLives > 0) { // Check if player has lives left
             gameOverSound.current?.play();
             setGameState('lose-time');
             clearInterval(timer);
             return 0;
+          } else if (gameState === 'playing' && playerLives <= 0) { // If no lives and time runs out
+             setGameState('lose-time'); // Or a specific 'lose' state if you prefer
+             clearInterval(timer);
+             return 0;
           }
         }
         return prevTime - 1;
       });
     }, 1000);
-
+  
     return () => clearInterval(timer);
-  }, [gameState]);
+  }, [gameState, playerLives]); // Add playerLives to dependency array
 
   useEffect(() => {
-    if (!gameCanvasRef.current) return;
+    if (!gameAreaRef.current) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (gameState !== 'playing') return;
 
-      let newPosition = { ...playerPosition };
+      let newPosition = { ...playerPositionRef.current }; // Use playerPositionRef.current
 
       switch (event.key) {
         case 'ArrowUp':
-          newPosition.y = Math.max(0, playerPosition.y - 1);
+          newPosition.y = Math.max(0, playerPositionRef.current.y - 1); // Use playerPositionRef.current
           break;
         case 'ArrowDown':
-          newPosition.y = Math.min(GRID_HEIGHT - 1, playerPosition.y + 1);
+          newPosition.y = Math.min(GRID_HEIGHT - 1, playerPositionRef.current.y + 1); // Use playerPositionRef.current
           break;
         case 'ArrowLeft':
-          newPosition.x = Math.max(0, playerPosition.x - 1);
+          newPosition.x = Math.max(0, playerPositionRef.current.x - 1); // Use playerPositionRef.current
           break;
         case 'ArrowRight':
-          newPosition.x = Math.min(GRID_WIDTH - 1, playerPosition.x + 1);
+          newPosition.x = Math.min(GRID_WIDTH - 1, playerPositionRef.current.x + 1); // Use playerPositionRef.current
           break;
         default:
           return;
@@ -336,36 +391,33 @@ export default function ForestCrossingPage() {
               setScore(prevScore => prevScore + 500);
            }
         }
-        setPlayerPosition(newPosition);
+        // Update playerPositionRef.current instead of setPlayerPosition
+        playerPositionRef.current = newPosition;
         playerHopSound.current?.play();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => { window.removeEventListener('keydown', handleKeyDown); };
-  }, [playerPosition, gameState]);
+  }, [gameState]); // Keep gameState in dependency array
 
   useEffect(() => {
-     if (gameState !== 'playing') return;
-
-     const currentRowType = gameGrid[playerPosition.y][playerPosition.x];
-
-     if (currentRowType === GRID_TYPE.FOREST && gameState === 'playing') {
-       forestReachedSound.current?.play();
-       setGameState('win');
-     }
-  }, [playerPosition, gameState]);
+    if (gameState === 'playing' && playerPositionRef.current.y === FOREST_ROW) {
+      forestReachedSound.current?.play();
+      setGameState('win');
+    }
+ }, [playerPositionRef.current.y, gameState]); // Add playerPositionRef.current.y to dependency array
 
   const spawnVehicle = () => {
+    console.log("spawnVehicle called"); // Add this
     if (gameState !== 'playing' || !sceneRef.current) return;
 
-    const randomLaneIndex = Math.floor(Math.random() * LANE_GRID_YS.length);
-    const laneGridY = LANE_GRID_YS[randomLaneIndex];
+    const randomLaneIndex = Math.floor(Math.random() * LANE_GRID_YS.length); const laneGridY = LANE_GRID_YS[randomLaneIndex];
 
-    const direction = randomLaneIndex % 2 === 0 ? 1 : -1;
-    const startGridX = direction === 1 ? -2 : GRID_WIDTH + 1; // Start further off-screen
+    const direction = randomLaneIndex % 2 === 0 ? 1 : -1; const startGridX = direction === 1 ? -2 : GRID_WIDTH + 1; // Start further off-screen
 
-    const speed = (direction === 1 ? 1 : -1) * (Math.random() * 2 + 1);
+    const speed = (direction === 1 ? 1 : -1) * (Math.random() * 3 + 2);
+    console.log("Vehicle speed:", speed); // Add this
     const type = Math.random() > 0.5 ? 'car' : 'motorcycle';
 
     let vehicleGeometry;
@@ -383,10 +435,10 @@ export default function ForestCrossingPage() {
 
     vehicleMesh.position.set(
       (startGridX - GRID_WIDTH / 2 + 0.5) * TILE_SIZE, // x
-      TILE_SIZE / 2,                                  // y (altura)
+      TILE_SIZE * 0.5, // Position vehicles above the environment plane
       (laneGridY - GRID_HEIGHT / 2 + 0.5) * TILE_SIZE  // z (profundidad)
     );
-
+  
     sceneRef.current.add(vehicleMesh);
 
     const newVehicle: Vehicle = {
@@ -398,15 +450,17 @@ export default function ForestCrossingPage() {
       mesh: vehicleMesh,
     };
 
-    setVehicles(prevVehicles => [...prevVehicles, newVehicle]);
-  };
+     // Update vehiclesRef.current instead of setVehicles
+     vehiclesRef.current.push(newVehicle);
+     console.log("Vehicle spawned:", newVehicle);
+     console.log("Number of vehicles in vehiclesRef:", vehiclesRef.current.length); // Add this log to check ref update
+   };
 
   useEffect(() => {
     if (gameState === 'lose-time' || gameState === 'lose-hit' || gameState === 'win') {
       console.log("Game Over/Win State:", gameState);
     }
   }, [gameState]);
-
 
   return (
     <>
@@ -427,7 +481,7 @@ export default function ForestCrossingPage() {
             </div>
 
             <div className="flex items-center justify-end w-1/3">
-              <GameUI score={score} time={timeLeft} lives={1} />
+              <GameUI score={score} time={timeLeft} lives={playerLives} />
             </div>
           </div>
         }
@@ -438,7 +492,7 @@ export default function ForestCrossingPage() {
               Forest Crossing
             </h1>
             <div
-            ref={gameCanvasRef}
+            ref={gameAreaRef} // Use gameAreaRef here
             className="relative mx-auto rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
               style={{
                 height: 'calc(70vh - 2rem)',
@@ -447,7 +501,8 @@ export default function ForestCrossingPage() {
                 maxHeight: '100%',     // Prevents overflow on small screens
                 }}
                 >
-            <canvas ref={threeCanvasRef} className="w-full h-full block" />
+            {/* Remove the canvas element here, it will be appended by Three.js */}
+            {/* <canvas ref={threeCanvasRef} className="w-full h-full block" /> */}
             </div>
           </div>
         }
@@ -475,7 +530,6 @@ export default function ForestCrossingPage() {
           </div>
         }
       />
-     
 
 {gameState !== 'playing' && (
   <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
@@ -503,3 +557,4 @@ export default function ForestCrossingPage() {
 </>
 );
 }
+

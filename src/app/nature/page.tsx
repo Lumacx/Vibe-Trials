@@ -462,98 +462,98 @@ const animate = (currentTime: number) => {
     }
   }, [gameState]);
 
+  /*CSS Code*/
   return (
     <>
-      <GameLayout
-        header={
-          <div className="flex w-full justify-between items-center h-full">
-            <div className="flex items-center justify-start w-1/3">
-              <Link href="/" passHref>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Hub
-                </Button>
-              </Link>
-            </div>
+      {/* Header */}
+  <div className="w-full px-[10%] p-2 mb-0 flex flex-wrap gap-6 justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+      <div className="flex-shrink-0">
+        <Link href="/" passHref>
+          <Button variant="outline" className="h-10">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Hub
+          </Button>
+        </Link>
+      </div>
+      <div className="flex-shrink max-w-[180px] w-full">
+        <AudioPlayer src="/music/6_Pixel_Groove_Adventure.mp3" volume={0.25} />
+      </div>
+    </div>
 
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <AudioPlayer src="/music/6_Pixel_Groove_Adventure.mp3" volume={0.25} />
-            </div>
-
-            <div className="flex items-center justify-end w-1/3">
-              <GameUI score={score} time={timeLeft} lives={playerLives} />
-            </div>
-          </div>
-        }
-
-        gameArea={
-          <div className="flex flex-col items-center justify-center w-full h-full">
-            <h1 className="font-headline text-4xl sm:text-6xl font-bold text-primary drop-shadow-lg mb-6">
-              Forest Crossing
-            </h1>
-            <div
-            ref={gameAreaRef} // Use gameAreaRef here
-            className="relative mx-auto rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
-              style={{
-                height: 'calc(70vh - 2rem)',
-                aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`,
-                maxWidth: '100%',      // Prevents overflow on small screens
-                maxHeight: '100%',     // Prevents overflow on small screens
-                }}
-                >
-            {/* Remove the canvas element here, it will be appended by Three.js */}
-            {/* <canvas ref={threeCanvasRef} className="w-full h-full block" /> */}
-            </div>
-          </div>
-        }
-
-        bottomSection={
-          <div className="flex flex-wrap w-full justify-around items-center gap-4 md:gap-0">
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs text-sm md:text-base">
-              <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
-              <p>Reach the forest on the other side.</p>
-              <p>Avoid being hit by vehicles.</p>
-            </div>
-
-            <div className="flex items-center justify-center flex-grow mx-0 md:mx-4 my-4 md:my-0">
-              <img
-                src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXZrZWYydThnb2l6cWdnNDY2azk5c3RpNnRndnlrNWh6MzFhczMweCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xckpvtJhGi3TpQKRrW/giphy.gif"
-                alt="Nature Animation"
-                className="w-32 h-auto rounded-lg shadow-lg md:w-40"
-              />
-            </div>
-
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs text-sm md:text-base">
-              <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
-              <p>Arrow Keys: Move 1 space.</p>
-            </div>
-          </div>
-        }
-      />
-
-{gameState !== 'playing' && (
-  <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
-    <div className="text-center">
-      {gameState === 'win' && (
-        <h2 className="font-headline text-4xl font-bold text-green-400">You Crossed!</h2>
-      )}
-      {gameState === 'lose-time' && (
-        <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
-      )}
-      {gameState === 'lose-hit' && (
-        <h2 className="font-headline text-4xl font-bold text-red-400">Squished!</h2>
-      )}
-      <Button onClick={() => window.location.reload()} className="mt-4">
-        Play Again
-      </Button>
-      <Link href="/" passHref>
-        <Button variant="outline" className="mt-4 ml-4">
-          Back to Hub
-        </Button>
-      </Link>
+    <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+      <div className="text-green-400 font-headline font-bold text-xl sm:text-2xl">
+        Forest Crossing
+      </div>
+      <div
+        className="flex-shrink-0"
+        style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}
+      >
+        <GameUI score={score} time={timeLeft} lives={playerLives} />
+      </div>
     </div>
   </div>
-)}
+
+{/* Game Area */}
+<div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
+    <div
+      ref={gameAreaRef}
+      className="relative mx-auto rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+      style={{
+        height: 'calc(70vh - 2rem)',
+        aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`,
+        maxWidth: '100%',
+        maxHeight: '100%',
+      }}
+    >
+      {/* Three.js canvas will be appended here */}
+    </div>
+  </div>
+
+  {/* Footer */}
+  <div className="w-full flex justify-center items-stretch gap-4 flex-wrap px-[10%] p-2">
+    <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1 text-sm md:text-base">
+      <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
+      <p>Reach the forest on the other side.</p>
+      <p>Avoid being hit by vehicles.</p>
+    </div>
+
+    <div className="flex items-center justify-center flex-1 min-w-[120px]">
+      <img
+        src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXZrZWYydThnb2l6cWdnNDY2azk5c3RpNnRndnlrNWh6MzFhczMweCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xckpvtJhGi3TpQKRrW/giphy.gif"
+        alt="Nature Animation"
+        className="w-32 sm:w-40 h-auto rounded-lg shadow-lg"
+      />
+    </div>
+
+    <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1 text-sm md:text-base">
+      <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
+      <p>Arrow Keys: Move 1 space.</p>
+    </div>
+  </div>
+
+  {/* Game Over Message */}
+  {gameState !== 'playing' && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
+      <div className="text-center space-y-4 p-4 rounded-lg bg-black/80">
+        {gameState === 'win' && (
+          <h2 className="font-headline text-4xl font-bold text-green-400">You Crossed!</h2>
+        )}
+        {gameState === 'lose-time' && (
+          <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
+        )}
+        {gameState === 'lose-hit' && (
+          <h2 className="font-headline text-4xl font-bold text-red-400">Squished!</h2>
+        )}
+        <div className="flex gap-4 justify-center">
+          <Button onClick={() => window.location.reload()}>Play Again</Button>
+          <Link href="/" passHref>
+            <Button variant="outline">Back to Hub</Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )}
 </>
 );
 }

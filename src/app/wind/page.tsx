@@ -325,93 +325,92 @@ useEffect(() => {
   };
 }, [gameState]);
 
+/*CSS Code*/
+//<div className="relative h-screen w-screen overflow-hidden bg-sky-900">
+//<div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/333344/a020f0.png?text=Sky+Background')] bg-cover bg-center" data-ai-hint="sky clouds"></div>
+//<div className="absolute inset-0 bg-black/20"></div>
+
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-sky-900">
-      <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/333344/a020f0.png?text=Sky+Background')] bg-cover bg-center" data-ai-hint="sky clouds"></div>
-      <div className="absolute inset-0 bg-black/20"></div>
+    <>
+           {/* Header */}
+  <div className="w-full px-[10%] p-2 mb-2 flex flex-wrap gap-6 justify-between">
+  {/* Left side group */}
+  <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+    <div className="flex-shrink-0">
+      <Link href="/" passHref>
+        <Button variant="outline" className="h-10">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Hub
+        </Button>
+      </Link>
+    </div>
+    <div className="flex-shrink max-w-[180px] w-full">
+      <AudioPlayer src="/music/4_Neon_Horizons.mp3" volume={0.15} />
+    </div>
+  </div>
 
-      <GameLayout
-        header={
-          <div className="flex w-full justify-between items-center h-full">
-            {/* Left: Back Button */}
-            <div className="flex items-center justify-start w-1/3">
-              <Link href="/" passHref>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Hub
-                </Button>
-              </Link>
-            </div>
+  {/* Right side group */}
+  <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+    <div className="text-cyan-300 font-headline font-bold text-xl sm:text-2xl">
+      Sky Guardian
+    </div>
+    <div
+      className="flex-shrink-0"
+      style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}
+    >
+      <GameUI score={score} time={timeLeft} lives={playerLives} />
+    </div>
+  </div>
+</div>
+ {/* Game Area */}
+ <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4 relative z-10">
+    <div
+      ref={threeCanvasRef}
+      className="relative rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+      style={{ width: '80vw', height: 'calc(70vh - 2rem)', marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+    >
+      {/* Three.js canvas goes here */}
+    </div>
+  </div>
 
-            {/* Center: Audio Player */}
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <AudioPlayer src="/music/4_Neon_Horizons.mp3" volume={0.15} />
-            </div>
+  {/* Footer */}
+  <div className="w-full flex justify-center items-stretch gap-4 flex-wrap px-[10%] p-2 relative z-10">
+    <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+      <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
+      <p>Destroy incoming alien enemies.</p>
+      <p>Survive as long as possible.</p>
+    </div>
 
-            {/* Right: Game UI */}
-            <div className="flex items-center justify-end w-1/3">
-              <GameUI score={score} time={timeLeft} lives={playerLives} />
-            </div>
-          </div>
-        }
-
-        gameArea={
-          <div className="flex flex-col items-center justify-center w-full h-full">
-             {/* Remove the H1 here if it's not desired in the game area */}
-            {/* <h1 className="font-headline text-4xl sm:text-6xl font-bold text-primary drop-shadow-lg mb-6">
-              Sky Guardian
-            </h1> */}
-            <div
-              ref={threeCanvasRef}
-              className="relative rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
-               style={{ width: '80vw', height: 'calc(70vh - 2rem)', marginTop: '15vh', marginLeft: 'auto', marginRight: 'auto' }}
-            >
-              {/* The Three.js canvas will be appended here by the useEffect */}
-            </div>
-          </div>
-        }
-
-        bottomSection={
-          <>
-            {/* Left: Goal */}
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs">
-              <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
-              <p>Destroy incoming alien enemies.</p>
-              <p>Survive as long as possible.</p>
-            </div>
-
-            {/* Center: GIF */}
-            <div className="flex items-center justify-center">
-              <img
-                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXF1czhzM2djMXpyYnVyaW1tejVwMzljbDY3ZGtwOXM1b3B3enljMyZlcD12MV9pbnRlcm5hbF9naWZfYnl\_idmcat=g/3IcEq6Cq9R9ErPoZIK/giphy.gif"
-                alt="Wind Animation"
-                className="w-40 h-auto rounded-lg shadow-lg"
-              />
-            </div>
-
-            {/* Right: Movement */}
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs">
-              <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
-              <p>Arrow Keys/A/D: Move left/right.</p>
-              <p>Spacebar/Z: Shoot.</p>
-            </div>
-          </>
-        }
+    <div className="flex items-center justify-center flex-1 min-w-[120px]">
+      <img
+        src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXF1czhzM2djMXpyYnVyaW1tejVwMzljbDY3ZGtwOXM1b3B3enljMyZlcD12MV9pbnRlcm5hbF9naWZfYnl_idmcat=g/3IcEq6Cq9R9ErPoZIK/giphy.gif"
+        alt="Wind Animation"
+        className="w-32 sm:w-40 h-auto rounded-lg shadow-lg"
       />
+    </div>
+
+    <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+      <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
+      <p>Arrow Keys / A / D: Move left/right.</p>
+      <p>Spacebar / Z: Shoot.</p>
+    </div>
+  </div>
 
       {/* Game Over Message */}
       {gameState === 'gameOver' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
-          <div className="text-center">
-            <h2 className="font-headline text-4xl font-bold text-red-400">Game Over!</h2>
-             {/* Optionally display final score */}
-            {/* <p className="text-white mt-2">Final Score: {score}</p> */}
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Play Again
-            </Button>
-          </div>
+      <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+      <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
+      <p className="text-white mb-4">Final Score: {score}</p>
+      <div className="flex gap-4 justify-center">
+        <Button onClick={() => window.location.reload()}>Restart</Button>
+        <Link href="/" passHref>
+          <Button variant="secondary">Back to Hub</Button>
+        </Link>
         </div>
-      )}
-    </div>
+      </div>
+      </div>
+    )}
+    </>
   );
 }

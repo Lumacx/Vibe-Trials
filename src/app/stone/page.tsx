@@ -530,95 +530,90 @@ export default function StoneLabyrinthPage() {
     }
   }, [gameState, lives]);
   
-  //Game UI
-  return (
-    <>
-      <GameLayout
-        header={
-          <div className="flex w-full justify-between items-center h-full">
-            {/* Left: Back Button */}
-            <div className="flex items-center justify-start w-1/3">
-              <Link href="/" passHref>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Hub
-                </Button>
-              </Link>
-            </div>
-      
-            {/* Center: Audio Player */}
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <AudioPlayer src="/music/3_Ancient_Echoes.mp3" />
-            </div>
-      
-            {/* Right: Game UI */}
-            <div className="flex items-center justify-end w-1/3">
-              <GameUI score={timeLeft*lives} time={timeLeft} lives={lives} />
-            </div>
-          </div>
-        }
+  // Game UI
+return (
+  <>
+  {/* Header */}
+  <div className="w-full px-[10%] p-2 mb-2 flex flex-wrap gap-6 justify-between">
+  {/* Left side group */}
+  <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+    <div className="flex-shrink-0">
+      <Link href="/" passHref>
+        <Button variant="outline" className="h-10">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Hub
+        </Button>
+      </Link>
+    </div>
+    <div className="flex-shrink max-w-[180px] w-full">
+      <AudioPlayer src="/music/3_Ancient_Echoes.mp3" />
+    </div>
+  </div>
 
-        gameArea={
-          <div className="flex flex-col items-center justify-center w-full h-full">
-            <h1 className="font-headline text-4xl sm:text-6xl font-bold text-primary drop-shadow-lg mb-6">
-              Stone Labyrinth
-            </h1>
-            <div
-              ref={gameCanvasRef}
-              className="relative w-full max-w-5xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
-              style={{ height: 'calc(70vh - 2rem)' }}
-            >
-              <canvas ref={threeCanvasRef} className="w-full h-full block" />
-            </div>
-          </div>
-        }
+  {/* Right side group */}
+  <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+    <div className="text-primary font-headline font-bold text-xl sm:text-2xl">
+      Stone Labyrinth
+    </div>
+    <div className="flex-shrink-0" style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}>
+      <GameUI score={timeLeft * lives} time={timeLeft} lives={lives} />
+    </div>
+  </div>
+</div>
 
-        bottomSection={
-          <>
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs">
-              <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
-              <p>Reach the green exit.</p>
-              <p>Avoid holes (lose a life).</p>
-            </div>
+{/* Game Area */}
+<div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
+  <div
+    ref={gameCanvasRef}
+    className="relative w-full max-w-5xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+    style={{ height: 'calc(60vh - 2rem)' }}
+  >
+    <canvas ref={threeCanvasRef} className="w-full h-full block" />
+  </div>
+</div>
 
-            <div className="flex items-center justify-center">
-              <img
-                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGt6eWhvN2huaHppOXN2MnluYjBqbHphMnFyZjA0aXh6MXRuYTMxdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT0xePQA4e8tTvFWta/giphy.gif"
-                alt="Stone Animation"
-                className="w-40 h-auto rounded-lg shadow-lg"
-              />
-            </div>
+{/* Footer */}
+<div className="w-full flex justify-center items-stretch gap-4 flex-wrap px-[10%] p-2">
+  <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+    <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
+    <p>Reach the green exit.</p>
+    <p>Avoid holes (lose a life).</p>
+  </div>
 
-            <div className="bg-black/70 p-4 rounded-lg max-w-xs">
-              <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
-              <p>Arrow Keys: Move 1 space</p>
-              <p>Zoom in/out: Mouse wheel</p>
-            </div>
-          </>
-        }
-      />
+  <div className="flex items-center justify-center flex-1 min-w-[120px]">
+    <img
+      src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGt6eWhvN2huaHppOXN2MnluYjBqbHphMnFyZjA0aXh6MXRuYTMxdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT0xePQA4e8tTvFWta/giphy.gif"
+      alt="Stone Animation"
+      className="w-32 sm:w-40 h-auto rounded-lg shadow-lg"
+    />
+  </div>
 
-      {/* Mensajes de fin de juego */}
-      {(gameState === 'win' || gameState === 'lose-time' || gameState === 'lose') && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
-          <div className="text-center">
-            {gameState === 'win' && (
-              <h2 className="font-headline text-4xl font-bold text-green-400">You Escaped!</h2>
-            )}
-            {gameState === 'lose-time' && (
-              <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
-            )}
-            {gameState === 'lose' && (
-              <h2 className="font-headline text-4xl font-bold text-red-400">Game Over! Out of Lives.</h2>
-            )}
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Play Again
-            </Button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+  <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+    <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
+    <p>Arrow Keys: Move 1 space</p>
+    <p>Zoom in/out: Mouse wheel</p>
+  </div>
+</div>
+
+  {/* End Game Message Overlay */}
+  {(gameState === 'win' || gameState === 'lose-time' || gameState === 'lose') && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
+      <div className="text-center space-y-4 p-4 rounded-lg bg-black/80">
+        {gameState === 'win' && (
+          <h2 className="font-headline text-4xl font-bold text-green-400">You Escaped!</h2>
+        )}
+        {gameState === 'lose-time' && (
+          <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
+        )}
+        {gameState === 'lose' && (
+          <h2 className="font-headline text-4xl font-bold text-red-400">Game Over! Out of Lives.</h2>
+        )}
+        <Button onClick={() => window.location.reload()} className="mt-4">
+          Play Again
+        </Button>
+      </div>
+    </div>
+  )}
+</>
+);
 }
-
-

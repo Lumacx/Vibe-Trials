@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@/components/AudioPlayer";
 import GameUI from "@/components/game/GameUI";
 import GameLayout from "@/components/game/GameLayout";
+
 import * as THREE from "three";
 import { Howl } from "howler";
 
@@ -407,72 +408,90 @@ const FirePage: React.FC = () => {
     }
   }, [health, gameState]);
 
-  return (
-    <div className="relative h-screen w-screen flex flex-col items-center justify-center bg-gray-900">
-      <GameLayout
-        header={
-          <div className="relative z-20 flex w-full justify-between items-center h-full">
-            <div className="flex items-center justify-start w-1/3">
-              <Link href="/" passHref>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Hub
-                </Button>
-              </Link>
-            </div>
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <AudioPlayer src="/music/2_Arcade_Fever.mp3" volume={0.15} />
-            </div>
-            <div className="flex items-center justify-end w-1/3">
-              <GameUI score={score} time={timeLeft} health={health} />
-            </div>
+  /*CSS Code UI*/
+  return  (
+    <>
+      {/* Header */}
+      <div className="w-full px-[10%] p-2 mb-2 flex flex-wrap gap-6 justify-between">
+        {/* Left side group */}
+        <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+          <div className="flex-shrink-0">
+            <Link href="/" passHref>
+              <Button variant="outline" className="h-10">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Hub
+              </Button>
+            </Link>
           </div>
-        }
-        gameArea={
-          <ThreeScene
-            setScore={setScore}
-            setHealth={setHealth}
-            gameState={gameState}
-          />
-        }
-        bottomSection={
-          <div className="relative z-20 flex w-[80vw] justify-between gap-4">
-            <div className="bg-black/70 p-4 rounded-lg w-1/3 text-center">
-              <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
-              <p>Cut the glowing gems to get points.</p>
-              <p>Avoid the ice cubes and explosives.</p>
-            </div>
-            <div className="flex items-center justify-center">
-              <img
-                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDNvaTNua2JlOWV0ajE1M2pkd2IzM25naGNpamRta2xmbHYyN2p6eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Dt9Kt7v5r30BHtkRdx/giphy.gif"
-                alt="Cutting Animation"
-                className="h-[100px] w-auto rounded-lg shadow-lg"
-              />
-            </div>
-            <div className="bg-black/70 p-4 rounded-lg w-1/3 text-center">
-              <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
-              <p>Move the cursor/finger to control the flame sword.</p>
-              <p>Use arrow keys too!</p>
-            </div>
-          </div>
-        }
-      />
-      {gameState === 'gameOver' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
-            <p className="text-white mb-4">Final Score: {score}</p>
-            <div className="flex gap-4 justify-center">
-              <Button onClick={() => window.location.reload()}>Restart</Button>
-              <Link href="/" passHref>
-                <Button variant="secondary">Back to Hub</Button>
-              </Link>
-            </div>
+          <div className="flex-shrink max-w-[180px] w-full">
+            <AudioPlayer src="/music/2_Arcade_Fever.mp3" volume={0.15} />
           </div>
         </div>
-      )}
+  
+        {/* Right side group */}
+        <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+          <div className="text-red-400 font-headline font-bold text-xl sm:text-2xl">
+            Flame Frenzy
+          </div>
+          <div
+            className="flex-shrink-0"
+            style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}
+          >
+            <GameUI score={score} time={timeLeft} health={health} />
+          </div>
+        </div>
+      </div>
+
+         {/* Game Area */}
+    <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
+      <div
+        className="relative max-w-5xl w-[80vw] rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+        style={{ height: 'calc(60vh - 2rem)' }}
+      >
+        <ThreeScene setScore={setScore} setHealth={setHealth} gameState={gameState} />
+      </div>
     </div>
-  );
+
+    {/* Footer */}
+    <div className="w-full flex justify-center items-stretch gap-4 flex-wrap px-[10%] p-2">
+      <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+        <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
+        <p>Cut the glowing gems to get points.</p>
+        <p>Avoid the ice cubes and explosives.</p>
+      </div>
+
+      <div className="flex items-center justify-center flex-1 min-w-[120px]">
+        <img
+          src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDNvaTNua2JlOWV0ajE1M2pkd2IzM25naGNpamRta2xmbHYyN2p6eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Dt9Kt7v5r30BHtkRdx/giphy.gif"
+          alt="Cutting Animation"
+          className="w-32 sm:w-40 h-auto rounded-lg shadow-lg"
+        />
+      </div>
+
+      <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
+        <h3 className="font-headline text-xl font-bold mb-2">Movement</h3>
+        <p>Move the cursor/finger to control the flame sword.</p>
+        <p>Use arrow keys too!</p>
+      </div>
+    </div>
+
+    {/* End Game Message Overlay */}
+    {gameState === 'gameOver' && (
+  <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+      <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
+      <p className="text-white mb-4">Final Score: {score}</p>
+      <div className="flex gap-4 justify-center">
+        <Button onClick={() => window.location.reload()}>Restart</Button>
+        <Link href="/" passHref>
+          <Button variant="secondary">Back to Hub</Button>
+        </Link>
+      </div>
+    </div>
+  </div>
+)}
+  </>
+);
 };
 
 export default FirePage;

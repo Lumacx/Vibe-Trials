@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -10,6 +12,8 @@ import GameLayout from "@/components/game/GameLayout";
 
 import * as THREE from "three";
 import { Howl } from "howler";
+import { Input } from "@/components/ui/input"; // Assuming you have an Input component
+import { addScore } from "@/services/LeaderboardService"; // Adjust the path if necessary
 
 const GAME_DURATION = 90;
 const OBJECT_SPAWN_INTERVAL = 800;
@@ -385,6 +389,16 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ setScore, setHealth, gameState 
 const FirePage: React.FC = () => {
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(3);
+  const [playerName, setPlayerName] = useState('');
+  const router = useRouter(); // Import and use useRouter for navigation
+
+  const handleSaveScore = async () => {
+    if (playerName.trim()) {
+      await addScore('Flame Frenzy', playerName, score);
+      router.push('/'); // Navigate back to the hub
+    }
+  };
+
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [gameState, setGameState] = useState<'playing' | 'gameOver'>('playing');
 
@@ -481,7 +495,15 @@ const FirePage: React.FC = () => {
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
       <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
       <p className="text-white mb-4">Final Score: {score}</p>
+      <div className="mb-4">
+        <Input
+          placeholder="Enter your name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+        />
+      </div>
       <div className="flex gap-4 justify-center">
+        <Button onClick={handleSaveScore}>Save Score</Button>
         <Button onClick={() => window.location.reload()}>Restart</Button>
         <Link href="/" passHref>
           <Button variant="secondary">Back to Hub</Button>

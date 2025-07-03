@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+
+import { useRouter } from 'next/navigation'; // Add this import
+import { Input } from "@/components/ui/input"; // Add this import
+import { addScore } from "@/services/LeaderboardService"; // Add this import
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -34,6 +39,8 @@ export default function HydroHeroesPage() {
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [gameState, setGameState] = useState<"playing" | "gameOver">("playing");
 
+  const [playerName, setPlayerName] = useState(''); // Add this state
+
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -45,6 +52,15 @@ export default function HydroHeroesPage() {
   const particleSystemsRef = useRef<THREE.Points[]>([]);
   const invincibleRef = useRef(false);
   const animFrameRef = useRef<number | null>(null);
+
+  const router = useRouter(); // Initialize useRouter
+
+  const handleSaveScore = async () => { // Add this function
+    if (playerName.trim()) {
+      await addScore('Hydro Heroes', playerName, score);
+      router.push('/'); // Navigate back to the hub
+    }
+  };
 
   const playerDirectionRef = useRef<'up' | 'down' | 'left' | 'right'>('up');
   const monsterSpeedRef = useRef(1);
@@ -308,19 +324,31 @@ export default function HydroHeroesPage() {
       </div>
     </div>
 
-      {gameState === "gameOver" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-          <div className="text-center">
-            <h2 className="font-headline text-4xl font-bold text-red-400">
-              Game Over!
-            </h2>
-            <p className="text-white mb-4">Final Score: {score}</p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Play Again
-            </Button>
+    {gameState === "gameOver" && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center"> {/* Add background and padding */}
+              <h2 className="font-headline text-4xl font-bold text-red-400 mb-4"> {/* Add margin-bottom */}
+                Game Over!
+              </h2>
+              <p className="text-white mb-4">Final Score: {score}</p>
+              <div className="mb-4"> {/* Add margin-bottom */}
+                <Input
+                  placeholder="Enter your name"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-4 justify-center"> {/* Add flex and gap */}
+                <Button onClick={handleSaveScore}>Save Score</Button> {/* Add Save Score Button */}
+                <Button onClick={() => window.location.reload()}>
+                  Play Again
+                </Button>
+                 {/* Optional: Add Back to Hub button like in other games */}
+                 {/* <Link href="/" passHref><Button variant="secondary">Back to Hub</Button></Link> */}
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 

@@ -3,6 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Howl } from 'howler';
 import Link from "next/link";
+
+import { useRouter } from 'next/navigation'; // Add this import
+import { Input } from "@/components/ui/input"; // Add this import
+import { addScore } from "@/services/LeaderboardService"; // Add this import
+
 import { Button } from "@vibe-components/ui/button";
 import { GameUI } from "@vibe-components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
@@ -41,8 +46,25 @@ export default function StoneLabyrinthPage() {
   const [gameState, setGameState] = useState<GameState>('playing');
   const [playerPosition, setPlayerPosition] = useState(START_POSITION);
   const [isFalling, setIsFalling] = useState(false);
+  const [playerName, setPlayerName] = useState(''); // Add this state
 
   const gameCanvasRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter(); // Initialize useRouter
+
+  // Calculate score based on remaining time and lives (adjust as needed for your game's scoring)
+  const calculateScore = () => {
+    return timeLeft * lives; // Example: Score is time left multiplied by lives
+  };
+
+  const handleSaveScore = async () => { // Add this function
+    if (playerName.trim()) {
+      const finalScore = calculateScore(); // Calculate the final score
+      await addScore('Stone Labyrinth', playerName, finalScore);
+      router.push('/'); // Navigate back to the hub
+    }
+  };
+  
   const threeCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const playerRef = useRef<THREE.Mesh | null>(null);
@@ -504,7 +526,7 @@ export default function StoneLabyrinthPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [gameState]); // Add gameState to dependency array
 
   // Handle losing a life when falling into a hole
   useEffect(() => {
@@ -595,25 +617,43 @@ return (
   </div>
 </div>
 
+jsx
   {/* End Game Message Overlay */}
-  {(gameState === 'win' || gameState === 'lose-time' || gameState === 'lose') && (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
-      <div className="text-center space-y-4 p-4 rounded-lg bg-black/80">
-        {gameState === 'win' && (
-          <h2 className="font-headline text-4xl font-bold text-green-400">You Escaped!</h2>
-        )}
-        {gameState === 'lose-time' && (
-          <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
-        )}
-        {gameState === 'lose' && (
-          <h2 className="font-headline text-4xl font-bold text-red-400">Game Over! Out of Lives.</h2>
-        )}
-        <Button onClick={() => window.location.reload()} className="mt-4">
+{(gameState === 'win' || gameState === 'lose-time' || gameState === 'lose') && (
+  <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center space-y-4">
+      {gameState === 'win' && (
+        <h2 className="font-headline text-4xl font-bold text-green-400">You Escaped!</h2>
+      )}
+      {gameState === 'lose-time' && (
+        <h2 className="font-headline text-4xl font-bold text-red-400">Time's Up!</h2>
+      )}
+      {gameState === 'lose' && (
+        <h2 className="font-headline text-4xl font-bold text-red-400">Game Over! Out of Lives.</h2>
+      )}
+      <p className="text-white">Final Score: {calculateScore()}</p>
+      <div className="mb-4">
+        <Input
+          placeholder="Enter your name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+        />
+      </div>
+      <div className="flex gap-4 justify-center">
+        <Button onClick={handleSaveScore} disabled={playerName.trim() === ''}>
+          Save Score
+        </Button>
+        <Button onClick={() => window.location.reload()}>
           Play Again
         </Button>
+        <Link href="/" passHref>
+          <Button variant="secondary">Back to Hub</Button>
+        </Link>
       </div>
     </div>
-  )}
+  </div>
+)}
+
 </>
 );
 }

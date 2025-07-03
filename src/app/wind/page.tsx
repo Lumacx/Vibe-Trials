@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { Button } from "@vibe-components/ui/button";
 import { GameUI } from "@vibe-components/game/GameUI";
@@ -12,6 +13,7 @@ import { Howl } from 'howler';
 import GameLayout from '@vibe-components/game/GameLayout';
 
 const GAME_DURATION = 90; // seconds
+import { addScore } from '@/services/LeaderboardService';
 const PLAYER_SPEED = 10; // Adjusted speed for better feel
 const PROJECTILE_SPEED = 5;
 const ENEMY_SPEED = 0.2;
@@ -19,10 +21,13 @@ const ENEMY_SPAWN_INTERVAL = 1000; // milliseconds
 const PLAYER_SHOT_COOLDOWN = 300; // milliseconds
 
 export default function SkyGuardianPage() {
+  const router = useRouter();
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [gameState, setGameState] = useState<'playing' | 'gameOver'>('playing');
   const [playerLives, setPlayerLives] = useState(1); // One-hit death as per GDD
+  const [playerName, setPlayerName] = useState('');
+
 
   const threeCanvasRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -67,6 +72,15 @@ export default function SkyGuardianPage() {
       gameOverSound.current?.play();
     }
   }, [playerLives, gameState]);
+
+  const handleSaveScore = () => {
+    if (playerName.trim() === '') {
+      alert('Please enter your name to save your score.');
+      return;
+    }
+    addScore('Sky Guardian', playerName, score);
+    router.push('/'); // Navigate back to the hub after saving
+  };
 
   // Sound Initialization Effect
   useEffect(() => {
@@ -399,10 +413,27 @@ useEffect(() => {
       {/* Game Over Message */}
       {gameState === 'gameOver' && (
       <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-      <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center flex flex-col items-center">
+      <h2 className="text-3xl font-bold text-red-400 mb-4">Game Over</h2>
       <p className="text-white mb-4">Final Score: {score}</p>
-      <div className="flex gap-4 justify-center">
+
+      <div className="mb-4 w-full max-w-xs">
+            <label htmlFor="playerName" className="block text-white text-sm font-bold mb-2">
+              Enter your name:
+            </label>
+            <input
+              type="text"
+              id="playerName"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Player Name"
+            />
+          </div>
+      <div className="flex gap-4 justify-center flex-wrap">
+        <Button onClick={handleSaveScore} disabled={playerName.trim() === ''}>
+          Save Score
+        </Button>
         <Button onClick={() => window.location.reload()}>Restart</Button>
         <Link href="/" passHref>
           <Button variant="secondary">Back to Hub</Button>

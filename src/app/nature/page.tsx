@@ -9,6 +9,7 @@ import { GameUI } from "@vibe-components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Add this line
+import { addScore } from "@/services/LeaderboardService";
 
 import GameLayout from '@vibe-components/game/GameLayout';
 // Define grid dimensions and tile size
@@ -61,6 +62,7 @@ export default function ForestCrossingPage() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [gameState, setGameState] = useState<GameState>('playing');
+  const [playerName, setPlayerName] = useState('');
   // Changed from useState to useRef for playerPosition
   const playerPositionRef = useRef(PLAYER_START_POSITION);
 
@@ -86,6 +88,14 @@ export default function ForestCrossingPage() {
   const gameOverSound = useRef<Howl | null>(null);
 
   const [playerLives, setPlayerLives] = useState(2); // Add state for player lives
+
+  const handleSaveScore = () => {
+    if (playerName.trim() !== '') {
+      addScore('Forest Crossing', playerName, score);
+      // Navigate back to the hub
+      window.location.href = '/';
+    }
+  };
 
 // *** Define handlePlayerHit function here ***
 const handlePlayerHit = () => {
@@ -545,11 +555,25 @@ const animate = (currentTime: number) => {
         {gameState === 'lose-hit' && (
           <h2 className="font-headline text-4xl font-bold text-red-400">Squished!</h2>
         )}
+        {/* Show score and save input/button only on terminal states */}
+        {(gameState === 'win' || gameState === 'lose-time' || gameState === 'lose-hit') && (
+          <>
+            <p className="text-white mb-4">Final Score: {score}</p>
+            <div className="flex flex-col items-center gap-2">
+              <input
+                type="text"
+                placeholder="Enter your name"
+                className="px-2 py-1 rounded text-black"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+              />
+              <Button onClick={handleSaveScore} disabled={playerName.trim() === ''}>Save Score</Button>
+            </div>
+          </>
+        )}
         <div className="flex gap-4 justify-center">
           <Button onClick={() => window.location.reload()}>Play Again</Button>
-          <Link href="/" passHref>
-            <Button variant="outline">Back to Hub</Button>
-          </Link>
+           {/* If score was saved, this button is not needed as we navigate away */}
         </div>
       </div>
     </div>

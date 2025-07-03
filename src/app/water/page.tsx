@@ -6,144 +6,287 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@/components/AudioPlayer";
 import GameUI from "@/components/game/GameUI";
-import GameLayout from "@/components/game/GameLayout";
-
 import * as THREE from "three";
 import { Howl } from "howler";
 
 const GAME_DURATION = 90;
-const OBJECT_SPAWN_INTERVAL = 800;
-const FREEZE_DURATION = 1500;
-const OBJECT_SPEED_FACTOR = 1.25;
+const GAME_AREA_WIDTH = 500;
+const GAME_AREA_HEIGHT = 500;
+const gridSize = 40;
 
-interface ThreeSceneProps {
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  setHealth: React.Dispatch<React.SetStateAction<number>>;
-  gameState: 'playing' | 'gameOver';
-}
- 
+// Audio
+const waterBlastSound = new Howl({ src: ["/sfx/Water_Blast_hose.mp3"] });
+const fireExtinguishSound = new Howl({ src: ["/sfx/Fire_Extinguish.mp3"] });
+const monsterMoveSounds = [
+  new Howl({ src: ["/sfx/Monster_Movement_1.mp3"] }),
+  new Howl({ src: ["/sfx/Monster_Movement_2.mp3"] }),
+];
+const playerHitSounds = [
+  new Howl({ src: ["/sfx/Player_Hit_ouch_1.mp3"] }),
+  new Howl({ src: ["/sfx/Player_Hit_ouch_2.mp3"] }),
+];
+const houseBurningSound = new Howl({ src: ["/sfx/House_Burning.mp3"], loop: true });
+const gameOverSound = new Howl({ src: ["/sfx/Game_Over_Despair.mp3"] });
 
 export default function HydroHeroesPage() {
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(100);
-  const [timeLeft, setTimeLeft] = useState(90);
-  const [audio] = useState(typeof Audio !== 'undefined' ? new Audio('/music/5_Chasing_Shadows.mp3') : undefined);
+  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
+  const [gameState, setGameState] = useState<"playing" | "gameOver">("playing");
+
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const canvasRef = useRef<HTMLDivElement | null>(null); // Ref for the game canvas container
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+  const playerRef = useRef<THREE.Mesh | null>(null);
+  const monsterRef = useRef<THREE.Mesh | null>(null);
+  const houseRefs = useRef<THREE.Mesh[]>([]);
+  const waterBlastsRef = useRef<THREE.Mesh[]>([]);
+  const particleSystemsRef = useRef<THREE.Points[]>([]);
+  const invincibleRef = useRef(false);
+  const animFrameRef = useRef<number | null>(null);
+
+  const playerDirectionRef = useRef<'up' | 'down' | 'left' | 'right'>('up');
+  const monsterSpeedRef = useRef(1);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  // Three.js Setup Effect
+  useEffect(() => {
+    if (timeLeft === 0 || health <= 0) {
+      setGameState("gameOver");
+      gameOverSound.play();
+    }
+  }, [timeLeft, health]);
+
+  useEffect(() => {
+    const speedTimer = setInterval(() => {
+      monsterSpeedRef.current += 0.5;
+    }, 30000);
+    return () => clearInterval(speedTimer);
+  }, []);
+
+  useEffect(() => {
+    const monsterInterval = setInterval(() => {
+      if (sceneRef.current) {
+        spawnMonster(sceneRef.current);
+      }
+    }, 10000); // 10 seconds
+  
+    return () => clearInterval(monsterInterval);
+  }, []);
+
   useEffect(() => {
     const container = canvasRef.current;
     if (!container) return;
-
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a0a); // Dark background
+    scene.background = new THREE.Color(0x000000);
     sceneRef.current = scene;
 
-    // Camera (Orthographic for 2D/Bomberman style)
-    const camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000);
-    camera.position.z = 10; // Position camera
+    const camera = new THREE.OrthographicCamera(
+      -GAME_AREA_WIDTH / 2, GAME_AREA_WIDTH / 2,
+      GAME_AREA_HEIGHT / 2, -GAME_AREA_HEIGHT / 2, 1, 1000
+    );
+    camera.position.z = 10;
     cameraRef.current = camera;
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Add a simple placeholder object (e.g., a cube)
-    const geometry = new THREE.BoxGeometry(50, 50, 50);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Player
+    const starShape = createStarShape(15, 6, 5);
+    const player = new THREE.Mesh(new THREE.ShapeGeometry(starShape),
+      new THREE.MeshBasicMaterial({ color: 0x00ffff, side: THREE.DoubleSide }));
+    player.position.set(0, -150, 0);
+    scene.add(player);
+    playerRef.current = player;
 
-    // Animation Loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    };
-    animate();
+    // Monster
+    spawnMonster(scene);
 
-    // Cleanup
-    return () => {
-      renderer.dispose();
-      if (renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
+    // Houses
+    const houseGeom = new THREE.BoxGeometry(45, 45, 10);
+    const burningMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const wallMat = new THREE.MeshBasicMaterial({ color: 0xbbbbbb });
+
+    houseRefs.current = [];
+    const placed: THREE.Vector3[] = [];
+    for (let i = 0; i < 3; i++) {
+      const pos = generateValidHousePosition(placed);
+      const house = new THREE.Mesh(houseGeom, burningMat.clone());
+      house.position.copy(pos);
+      house.userData.isBurning = true;
+      scene.add(house);
+      houseRefs.current.push(house);
+      placed.push(pos);
+      addFireParticles(pos, scene);
+    }
+    [[-180, -180], [180, -180], [-80, -200], [80, -200], [-120, 200], [120, 200]].forEach(([x, y]) => {
+      const wall = new THREE.Mesh(houseGeom, wallMat.clone());
+      wall.position.set(x, y, 0);
+      scene.add(wall);
+      houseRefs.current.push(wall);
+    });
+    houseBurningSound.play();
+
+    // Input
+    const keyHandler = (e: KeyboardEvent) => {
+      if (!playerRef.current || gameState !== "playing") return;
+      const pos = playerRef.current.position.clone();
+      let nextPos = pos.clone();
+
+      if (e.key === "ArrowUp") { nextPos.y += gridSize; playerDirectionRef.current = 'up'; }
+      if (e.key === "ArrowDown") { nextPos.y -= gridSize; playerDirectionRef.current = 'down'; }
+      if (e.key === "ArrowLeft") { nextPos.x -= gridSize; playerDirectionRef.current = 'left'; }
+      if (e.key === "ArrowRight") { nextPos.x += gridSize; playerDirectionRef.current = 'right'; }
+
+      const playerBox = new THREE.Box3().setFromCenterAndSize(nextPos, new THREE.Vector3(30, 30, 30));
+      const collision = houseRefs.current.some(h => new THREE.Box3().setFromObject(h).intersectsBox(playerBox));
+      if (!collision) playerRef.current.position.copy(nextPos);
+
+      if (e.key === " " || e.key === "z") {
+        waterBlastSound.play();
+        shootWaterBlast(scene);
       }
     };
-  }, []); // Run only once on mount
-  // Removed direct audio handling as AudioPlayer component is used
+    window.addEventListener("keydown", keyHandler);
 
-    //<div className="relative h-screen w-screen overflow-hidden bg-blue-900">
-     // <div className="absolute inset-0 bg-[url('https://placehold.co/1920x1080/222244/00ff00.png?text=Burning+Town')] bg-cover bg-center" data-ai-hint="burning town"></div>
-     // <div className="absolute inset-0 bg-black/50"></div>
+   // Animation
+   const animate = () => {
+    if (renderer && camera && playerRef.current) {
+      // Move monster toward player
+      if (monsterRef.current) {
+        const dir = new THREE.Vector3()
+          .subVectors(playerRef.current.position, monsterRef.current.position)
+          .normalize()
+          .multiplyScalar(monsterSpeedRef.current);
+        monsterRef.current.position.add(dir);
+      }
+  
+      // Check water blast collisions
+      waterBlastsRef.current.forEach(blast => {
+        const bBox = new THREE.Box3().setFromObject(blast);
+  
+        // Check burning houses
+        houseRefs.current.forEach(h => {
+          if (h.userData.isBurning) {
+            const hBox = new THREE.Box3().setFromObject(h);
+            if (bBox.intersectsBox(hBox)) {
+              (h.material as THREE.MeshBasicMaterial).color.set(0x888888); // Extinguished color
+              h.userData.isBurning = false;
+              setScore(prev => prev + 100);
+              fireExtinguishSound.play();
+            }
+          }
+        });
+  
+        // Check monster hit
+        if (monsterRef.current) {
+          const mBox = new THREE.Box3().setFromObject(monsterRef.current);
+          if (bBox.intersectsBox(mBox)) {
+            sceneRef.current?.remove(monsterRef.current);
+            monsterRef.current = null;
+            setScore(prev => prev + 200);
+            fireExtinguishSound.play();
+          }
+        }
+      });
+  
+      // Check player-monster collision
+      if (monsterRef.current) {
+        const pBox = new THREE.Box3().setFromObject(playerRef.current);
+        const mBox = new THREE.Box3().setFromObject(monsterRef.current);
+  
+        if (pBox.intersectsBox(mBox) && !invincibleRef.current) {
+          playerHitSounds[Math.floor(Math.random() * playerHitSounds.length)].play();
+          setHealth(prev => Math.max(0, prev - 25));
+          invincibleRef.current = true;
+          (playerRef.current.material as THREE.MeshBasicMaterial).color.set(0xff0000);
+          setTimeout(() => {
+            (playerRef.current!.material as THREE.MeshBasicMaterial).color.set(0x00ffff);
+            invincibleRef.current = false;
+          }, 1000);
+        }
+  
+        // Check monster burning houses
+        houseRefs.current.forEach(h => {
+          if (!h.userData.isBurning) {
+            const hBox = new THREE.Box3().setFromObject(h);
+            if (mBox.intersectsBox(hBox)) {
+              (h.material as THREE.MeshBasicMaterial).color.set(0xff0000);
+              h.userData.isBurning = true;
+              addFireParticles(h.position, sceneRef.current!);
+            }
+          }
+        });
+      }
+  
+      renderer.render(scene, camera);
+    }
+  
+    animFrameRef.current = requestAnimationFrame(animate);
+  };
+  
+  animate();
+
+  return () => {
+    window.removeEventListener("keydown", keyHandler);
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    houseBurningSound.stop();
+    renderer.dispose();
+    container.removeChild(renderer.domElement);
+  };
+}, [gameState]);
+
   return (
-     <>  
-      <div className="relative h-screen w-screen flex flex-col items-center justify-center bg-blue-900">
+    /*Header*/
+    <div className="relative h-screen w-screen flex flex-col items-center justify-center bg-blue-900">
+      <div className="w-full px-[10%] p-2 mb-2 flex flex-wrap gap-6 justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+          <div className="flex-shrink-0">
+            <Link href="/" passHref>
+              <Button variant="outline" className="h-10">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Hub
+              </Button>
+            </Link>
+          </div>
+          <div className="flex-shrink max-w-[180px] w-full">
+            <AudioPlayer src="/music/5_Chasing_Shadows.mp3" volume={0.15} />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
+          <div className="text-cyan-400 font-headline font-bold text-xl sm:text-2xl">
+            Hydro Heroes
+          </div>
+          <div
+            className="flex-shrink-0"
+            style={{ transform: "scale(0.8)", transformOrigin: "right center" }}
+          >
+            <GameUI score={score} time={timeLeft} health={health} />
+          </div>
+        </div>
+      </div>
       
-        {/* Header */}
-    <div className="w-full px-[10%] p-2 mb-2 flex flex-wrap gap-6 justify-between">
-    {/* Left side group */}
-    <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
-      <div className="flex-shrink-0">
-        <Link href="/" passHref>
-          <Button variant="outline" className="h-10">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Hub
-          </Button>
-        </Link>
+      {/* GameArea */}
+      <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
+        <div
+          ref={canvasRef}
+          className="relative w-full max-w-5xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
+          style={{ height: "calc(60vh - 2rem)" }}
+        ></div>
       </div>
-      <div className="flex-shrink max-w-[180px] w-full">
-        <AudioPlayer src="/music/5_Chasing_Shadows.mp3" volume={0.15} />
-      </div>
-    </div>
 
-    {/* Right side group */}
-    <div className="flex flex-wrap items-center justify-between gap-5 flex-1 min-w-[250px]">
-      <div className="text-cyan-400 font-headline font-bold text-xl sm:text-2xl">
-        Hydro Heroes
-      </div>
-      <div
-        className="flex-shrink-0"
-        style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}
-      >
-        <GameUI score={score} time={timeLeft} health={health} />
-      </div>
-    </div>
-  </div>
-
-
-        {/* Game Area */}
-    <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
-      <div
-         // ref={gameCanvasRef}
-        className="relative w-full max-w-5xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm"
-        style={{ height: 'calc(60vh - 2rem)' }}
-      >
-         {/* <canvas ref={threeCanvasRef} className="w-full h-full block" /> */}
-         <canvas className="w-full h-full block" />
-            {/* Three.js canvas will be rendered inside this div by the game logic */}
-            {/* Add your Three.js canvas here. Example: */}
-            {/* <canvas ref={yourCanvasRef} className="w-full h-full block" /> */}
-            {/* Your game rendering logic will go here */}
-            </div>
-    </div>
-      
-        {/* Footer */}
+              {/* Footer */}
     <div className="w-full flex justify-center items-stretch gap-4 flex-wrap px-[10%] p-2">
       <div className="bg-black/70 p-4 rounded-lg max-w-xs min-w-[120px] flex-1">
         <h3 className="font-headline text-xl font-bold mb-2">Goal</h3>
@@ -165,56 +308,110 @@ export default function HydroHeroesPage() {
       </div>
     </div>
 
-    
-      {/*gameState === 'gameOver' && (
+      {gameState === "gameOver" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-3xl font-bold text-red-400 mb-4">Time's up - Save Score in Hub?</h2>
-            <p className="text-white mb-4">Final Score: {score}</p>
-            <div className="flex gap-4 justify-center">
-              <Button onClick={() => window.location.reload()}>Restart</Button>
-              <Link href="/" passHref>
-                <Button variant="secondary">Back to Hub</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )*/}
-    
-
-      {/* Game Over Message Placeholder (Adapt as needed for Water game) */}
-      {/* Example: If you have a win/lose condition based on time or health */}
-      {/*
-      {(timeLeft === 0 || health <= 0 || allFiresExtinguished) && ( // Assuming allFiresExtinguished is a state variable
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
           <div className="text-center">
-            {allFiresExtinguished && health > 0 && (
-              <h2 className="font-headline text-4xl font-bold text-green-400">Fires Extinguished!</h2>
-            )}
-            {(timeLeft === 0 || health <= 0) && !allFiresExtinguished && ( // Assuming time out or no health means lose
-              <h2 className="font-headline text-4xl font-bold text-red-400">Game Over!</h2>
-            )}
+            <h2 className="font-headline text-4xl font-bold text-red-400">
+              Game Over!
+            </h2>
+            <p className="text-white mb-4">Final Score: {score}</p>
             <Button onClick={() => window.location.reload()} className="mt-4">
               Play Again
             </Button>
           </div>
         </div>
       )}
-      */}
-      {/* Removed original main content */}
-      {/*
-      <main className="relative z-10 flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-headline text-6xl font-bold text-primary drop-shadow-lg">
-          Hydro Heroes
-        </h1>
-        <div className="mt-4 h-3/5 w-4/5 max-w-4xl rounded-lg border-4 border-accent/50 bg-black/30 backdrop-blur-sm">
-          <p className="p-4 text-center text-muted-foreground">
-            Game Canvas Placeholder (Bomberman Style)
-          </p>
-        </div>
-      </main>
-      */}
+    </div>
+  );
 
-</div>
-  </>
-);}
+  function createStarShape(outer: number, inner: number, points: number) {
+    const shape = new THREE.Shape();
+    shape.moveTo(outer, 0);
+    for (let i = 0; i < points; i++) {
+      const outerA = (Math.PI / points) * (2 * i);
+      const innerA = (Math.PI / points) * (2 * i + 1);
+      shape.lineTo(outer * Math.cos(outerA), outer * Math.sin(outerA));
+      shape.lineTo(inner * Math.cos(innerA), inner * Math.sin(innerA));
+    }
+    shape.closePath();
+    return shape;
+  }
+
+  function shootWaterBlast(scene: THREE.Scene) {
+    const positions: THREE.Vector3[] = [];
+    const p = playerRef.current!.position.clone();
+  
+    switch (playerDirectionRef.current) {
+      case 'up':
+        positions.push(new THREE.Vector3(p.x, p.y + gridSize, 0));
+        positions.push(new THREE.Vector3(p.x, p.y + gridSize * 2, 0));
+        break;
+      case 'down':
+        positions.push(new THREE.Vector3(p.x, p.y - gridSize, 0));
+        positions.push(new THREE.Vector3(p.x, p.y - gridSize * 2, 0));
+        break;
+      case 'left':
+        positions.push(new THREE.Vector3(p.x - gridSize, p.y, 0));
+        positions.push(new THREE.Vector3(p.x - gridSize * 2, p.y, 0));
+        break;
+      case 'right':
+        positions.push(new THREE.Vector3(p.x + gridSize, p.y, 0));
+        positions.push(new THREE.Vector3(p.x + gridSize * 2, p.y, 0));
+        break;
+    }
+  
+    positions.forEach(pos => {
+      const blast = new THREE.Mesh(
+        new THREE.ConeGeometry(10, 30, 8),
+        new THREE.MeshBasicMaterial({ color: 0x0000aa, opacity: 0.7, transparent: true }) // Darker blue
+      );
+      blast.position.copy(pos);
+      scene.add(blast);
+      waterBlastsRef.current.push(blast);
+      setTimeout(() => {
+        scene.remove(blast);
+        waterBlastsRef.current = waterBlastsRef.current.filter(b => b !== blast);
+      }, 300);
+    });
+  }
+
+  function spawnMonster(scene: THREE.Scene) {
+    const monster = new THREE.Mesh(
+      new THREE.ConeGeometry(18, 36, 16),
+      new THREE.MeshBasicMaterial({ color: 0xffff00 })
+    );
+    monster.position.set(0, GAME_AREA_HEIGHT / 2 - gridSize * 2, 0);
+    scene.add(monster);
+    monsterRef.current = monster;
+  }
+
+  function addFireParticles(pos: THREE.Vector3, scene: THREE.Scene) {
+    const geom = new THREE.BufferGeometry();
+    const verts = new Float32Array(300).map(() => (Math.random() - 0.5) * 20);
+    geom.setAttribute("position", new THREE.BufferAttribute(verts, 3));
+    const pts = new THREE.Points(geom, new THREE.PointsMaterial({ color: 0xff6600, size: 2 }));
+    pts.position.copy(pos);
+    scene.add(pts);
+    particleSystemsRef.current.push(pts);
+  }
+
+  function generateValidHousePosition(existing: THREE.Vector3[]): THREE.Vector3 {
+    let valid = false;
+    let newPos = new THREE.Vector3(0, 0, 0);
+    while (!valid) {
+      newPos.set(
+        Math.round((Math.random() - 0.5) * (GAME_AREA_WIDTH - gridSize * 4) / gridSize) * gridSize,
+        Math.round((Math.random() - 0.5) * (GAME_AREA_HEIGHT - gridSize * 4) / gridSize) * gridSize,
+        0
+      );
+      valid = existing.every(pos => pos.distanceTo(newPos) >= gridSize * 2);
+      if (
+        Math.abs(newPos.x) > GAME_AREA_WIDTH / 2 - gridSize * 2 ||
+        Math.abs(newPos.y) > GAME_AREA_HEIGHT / 2 - gridSize * 2
+      ) {
+        valid = false;
+      }
+    }
+    return newPos;
+  }
+}

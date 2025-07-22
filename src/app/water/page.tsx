@@ -20,18 +20,24 @@ const GAME_AREA_HEIGHT = 500;
 const gridSize = 40;
 
 // Audio
-const waterBlastSound = new Howl({ src: ["/sfx/Water_Blast_hose.mp3"] });
-const fireExtinguishSound = new Howl({ src: ["/sfx/Fire_Extinguish.mp3"] });
+const waterBlastSound = new Howl({ src: ["/sfx/Water_Blast_hose.mp3"], volume: 0.15 });
+const fireExtinguishSound = new Howl({ src: ["/sfx/Fire_Extinguish.mp3"], volume: 0.1 });
 const monsterMoveSounds = [
-  new Howl({ src: ["/sfx/Monster_Movement_1.mp3"] }),
-  new Howl({ src: ["/sfx/Monster_Movement_2.mp3"] }),
+  new Howl({ src: ["/sfx/Monster_Movement_1.mp3"], volume: 0.05 }),
+  new Howl({ src: ["/sfx/Monster_Movement_2.mp3"], volume: 0.05 }),
 ];
+
 const playerHitSounds = [
-  new Howl({ src: ["/sfx/Player_Hit_ouch_1.mp3"] }),
-  new Howl({ src: ["/sfx/Player_Hit_ouch_2.mp3"] }),
+  new Howl({ src: ["/sfx/Player_Hit_ouch_1.mp3"], volume: 0.2 }),
+  new Howl({ src: ["/sfx/Player_Hit_ouch_2.mp3"], volume: 0.2 }),
 ];
-const houseBurningSound = new Howl({ src: ["/sfx/House_Burning.mp3"], loop: true });
-const gameOverSound = new Howl({ src: ["/sfx/Game_Over_Despair.mp3"] });
+const houseBurningSound = new Howl({
+  src: ["/sfx/House_Burning.mp3"],
+  loop: true,
+  volume: 0.05, // Más suave para sonido de fondo
+});
+
+const gameOverSound = new Howl({ src: ["/sfx/Game_Over_Despair.mp3"], volume: 0.15 });
 
 export default function HydroHeroesPage() {
   const [score, setScore] = useState(0);

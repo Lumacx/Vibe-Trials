@@ -46,11 +46,22 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ setScore, setHealth, gameState 
 
   // SFX
   const gemSFX = useRef(
-    ["/sfx/Gem_Cut_1.mp3", "/sfx/Gem_Cut_2.mp3", "/sfx/Gem_Cut_3.mp3"].map(src => new Howl({ src }))
+    ["/sfx/Gem_Cut_1.mp3", "/sfx/Gem_Cut_2.mp3", "/sfx/Gem_Cut_3.mp3"].map(
+      (src) => new Howl({ src: [src], volume: 0.15 }) // ✨ Suave y cristalino
+    )
   );
-  const iceSFX = useRef(new Howl({ src: "/sfx/Ice_Cube_freeze.mp3" }));
-  const boomSFX = useRef(new Howl({ src: "/sfx/Explosion_boom.mp3" }));
-  const wooshSFX = useRef(new Howl({ src: "/sfx/Object_Woosh_Gentle.mp3" }));
+  
+  const iceSFX = useRef(
+    new Howl({ src: ["/sfx/Ice_Cube_freeze.mp3"], volume: 0.1 }) // ❄️ Ambiental y ligero
+  );
+  
+  const boomSFX = useRef(
+    new Howl({ src: ["/sfx/Explosion_boom.mp3"], volume: 0.2 }) // 💥 Impactante pero no molesto
+  );
+  
+  const wooshSFX = useRef(
+    new Howl({ src: ["/sfx/Object_Woosh_Gentle.mp3"], volume: 0.1 }) // 🌬️ Suave como brisa
+  );
 
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
 

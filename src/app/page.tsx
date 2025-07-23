@@ -1,4 +1,6 @@
-"use client";
+'use client'; // 🔥 Obligatorio
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from "@vibe-components/ui/button";
 import {

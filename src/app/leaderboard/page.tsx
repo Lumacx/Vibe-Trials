@@ -1,4 +1,4 @@
-'use client';
+'use client'; // 🔥 Obligatorio
 
 import Link from "next/link";
 import { Button } from "@vibe-components/ui/button";

@@ -1,8 +1,11 @@
+'use client'; // 🔥 Obligatorio
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@vibe-components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import AudioPlayer from "@vibe-components/AudioPlayer";
-
+import Image from "next/image";
 const backgroundMusic = "/music/7_Eternal_Horizon.mp3";
 const volume = 0.15;
 
@@ -26,11 +29,13 @@ export default function CreditsPage() {
 
         <div className="logo-attribution mt-16">
          <p className="mb-2 text-center">Created by</p>
-        <img
+         <Image
           src="https://studioswai.com/wp-content/uploads/Swai-logo.png"
           alt="Studio Swai logo"
+          width={300}
+          height={120}
           className="w-1/2 h-auto mx-auto"
-         />
+          />
         </div>
 
         <Link href="/" className="mt-12">

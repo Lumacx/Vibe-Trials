@@ -51,7 +51,6 @@
     "@starknet-react/core": "^3.7.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^10.0.0",
-    "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -72,9 +71,9 @@
     "recharts": "^2.15.1",
     "starknet": "^6.23.1",
     "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7",
     "three": "^0.165.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@types/howler": "^2.2.12",
@@ -84,10 +83,16 @@
     "@types/three": "^0.165.0",
     "@types/webpack": "^5.28.5",
     "@vitejs/plugin-react": "^4.5.2",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
     "genkit-cli": "^1.8.0",
     "postcss": "^8.5.6",
+    "postcss-loader": "^8.1.1",
     "server-only": "^0.0.1",
+    "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
     "vite-plugin-top-level-await": "^1.5.0",
     "vite-plugin-wasm": "^3.4.1"

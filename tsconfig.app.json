@@ -20,11 +20,14 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
 
-        "paths": {
-      "@/*": ["./src/*"], // Add or verify this alias
-      "@vibe-components/*": ["./src/components/*"]
-      // ... other aliases
+         /* Path Aliases */
+          "baseUrl": "src",
+          "paths": {
+              "@/*": ["./*"],
+              "@vibe-components/*": ["./components/*"],
+              "@manifest": ["./dojo/contracts/target/manifest_dev.json"],
+              "@/dojo/config/manifest": ["./dojo/config/manifest.ts"]
     }
-    },
-    "include": ["src"]
+  },
+  "include": ["src"]
 }

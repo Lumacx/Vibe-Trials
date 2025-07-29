@@ -9,15 +9,17 @@
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "module": "esnext",
-    "moduleResolution": "bundler", // correcto para Next.js 14+
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
+    "baseUrl": "src",                      // ✅ CAMBIADO: de "." a "src"
     "paths": {
-      "@/*": ["./src/*"],
-      "@vibe-components/*": ["./src/components/*"]
+      "@/*": ["./*"],
+      "@vibe-components/*": ["./components/*"],
+      "@manifest": ["./dojo/contracts/target/manifest_dev.json"],
+      "@/dojo/config/manifest": ["./dojo/config/manifest.ts"]
     },
     "plugins": [
       {
@@ -27,6 +29,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "src/types/**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"

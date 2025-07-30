@@ -1,13 +1,14 @@
-// src/components/DojoProviderClient.tsx
 'use client';
+
 import { dojoConfig } from "../dojo/dojoConfig";
 import { setupWorld } from "../dojo/contracts.gen";
 import { init } from "@dojoengine/sdk";
 import type { SchemaType } from "../dojo/bindings";
-import React from "react";
+import React, { useMemo } from "react";
 
 export const DojoProviderClient = ({ children }: { children: React.ReactNode }) => {
-  const sdk = init<SchemaType>({
+  // ✅ Solo ejecutar en cliente
+  const sdk = useMemo(() => init<SchemaType>({
     client: {
       toriiUrl: dojoConfig.toriiUrl,
       worldAddress: dojoConfig.manifest.world.address,
@@ -18,7 +19,7 @@ export const DojoProviderClient = ({ children }: { children: React.ReactNode }) 
       chainId: "KATANA",
       revision: "1",
     },
-  });
+  }), []);
 
   return <>{children}</>;
 };

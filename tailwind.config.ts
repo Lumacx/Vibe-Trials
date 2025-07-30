@@ -21,6 +21,7 @@ const config: Config = {
         body: ['Inter', 'sans-serif'],
         headline: ['"Space Grotesk"', 'sans-serif'],
         code: ['"Source Code Pro"', 'monospace'],
+        retro: ['"Press Start 2P"', 'monospace'], // ✅ NUEVA FUENTE AGREGADA
       },
       colors: {
         background: 'hsl(var(--background))',

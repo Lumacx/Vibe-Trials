@@ -1,6 +1,6 @@
+import path from 'path';
 import type { NextConfig } from 'next';
 import type { RuleSetRule } from 'webpack';
-import path from 'path';
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -29,22 +29,25 @@ const nextConfig: NextConfig = {
     serverActions: {},
   },
   webpack: (config, { isServer }) => {
-    // ✅ Activar soporte para WebAssembly y top-level await
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname, 'src'),
+      '@vibe-components': path.resolve(__dirname, 'src/components'),
+      '@manifest': path.resolve(__dirname, 'dojo/contracts/target/manifest_dev.json'),
+      '#/dojo/config/manifest': path.resolve(__dirname, 'dojo/config/manifest.ts'),
+    };
+
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
       topLevelAwait: true,
     };
 
-    // 🔥 Eliminar reglas antiguas que interfieran con .wasm
     config.module.rules = config.module.rules.filter(
       (rule: RuleSetRule) =>
-        typeof rule !== 'string' &&
-        rule.test &&
-        !rule.test.toString().includes('wasm')
+        !(typeof rule === 'object' && rule.type === 'webassembly/async')
     );
 
-    // 📦 Regla personalizada para .wasm (incluye @dojoengine)
     config.module.rules.unshift({
       test: /\.wasm$/,
       type: 'webassembly/async',
@@ -57,7 +60,6 @@ const nextConfig: NextConfig = {
       },
     });
 
-    // ⚙️ Babel-loader para TypeScript
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       exclude: /node_modules/,
@@ -69,7 +71,6 @@ const nextConfig: NextConfig = {
       },
     });
 
-    // ✅ Activar soporte para TailwindCSS/PostCSS (sin romper Next)
     config.module.rules.push({
       test: /\.css$/i,
       use: [

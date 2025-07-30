@@ -2,16 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Howl } from 'howler';
-import AudioPlayer from "@vibe-components/AudioPlayer";
+import AudioPlayer from "@/components/AudioPlayer";
 import Link from "next/link";
-import { Button } from "@vibe-components/ui/button";
-import { GameUI } from "@vibe-components/game/GameUI";
+import { Button } from "@/components/ui/button";
+import { GameUI } from "@/components/game/GameUI";
 import { ArrowLeft } from "lucide-react";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { addScore } from "@/services/LeaderboardService";
 
-import GameLayout from '@vibe-components/game/GameLayout';
+import GameLayout from '@/components/game/GameLayout';
 
 // Define grid dimensions and tile size
 const GRID_WIDTH = 16;

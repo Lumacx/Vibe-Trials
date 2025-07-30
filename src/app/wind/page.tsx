@@ -3,14 +3,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
-import { Button } from "@vibe-components/ui/button";
-import { GameUI } from "@vibe-components/game/GameUI";
-import AudioPlayer from "@vibe-components/AudioPlayer";
+import { Button } from "@/components/ui/button";
+import { GameUI } from "@/components/game/GameUI";
+import AudioPlayer from "@/components/AudioPlayer";
 import { ArrowLeft } from 'lucide-react';
 import * as THREE from 'three';
 import { Howl } from 'howler';
 
-import GameLayout from '@vibe-components/game/GameLayout';
+import GameLayout from '@/components/game/GameLayout';
 
 const GAME_DURATION = 90; // seconds
 import { addScore } from '@/services/LeaderboardService';

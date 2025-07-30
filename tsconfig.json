@@ -8,18 +8,21 @@
     "noEmit": true,
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
-    "module": "esnext",
+    //"module": "Node16",
+    //"moduleResolution": "Node16",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "src",                      // ✅ CAMBIADO: de "." a "src"
+    "types": ["next", "react", "node"],
+    "baseUrl": ".", // ✅ MODIFIED: Change back to "." (project root)
     "paths": {
-      "@/*": ["./*"],
-      "@vibe-components/*": ["./components/*"],
+      "@/*": ["./src/*"], // ✅ MODIFIED: Now resolves to ./src
+      "@vibe-components/*": ["./src/components/*"], // ✅ MODIFIED: Now resolves to ./src/components
       "@manifest": ["./dojo/contracts/target/manifest_dev.json"],
-      "@/dojo/config/manifest": ["./dojo/config/manifest.ts"]
+      "#/dojo/config/manifest": ["./dojo/config/manifest.ts"] // Changed to #/ for clarity if needed
     },
     "plugins": [
       {
@@ -29,10 +32,13 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/types/**/*.d.ts",
+    "src/types/**/*.d.ts", // Added to ensure your custom types are picked up
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "vite.config.ts"
+  ]
 }

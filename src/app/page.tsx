@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from "@vibe-components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   FireIcon,
   StoneIcon,
@@ -10,8 +10,8 @@ import {
   WaterIcon,
   NatureIcon,
   TreasureChestIcon,
-} from "@vibe-components/icons/GameIcons";
-import AudioPlayer from '@vibe-components/AudioPlayer';
+} from "@/components/icons/GameIcons";
+import AudioPlayer from '@/components/AudioPlayer';
 import { useStarknetConnect } from '../dojo/useStarknetConnect'; // Import the useStarknetConnect hook
 
 const gameSymbols = [

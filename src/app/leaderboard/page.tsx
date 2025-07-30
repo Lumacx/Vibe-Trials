@@ -1,7 +1,7 @@
 'use client'; // 🔥 Obligatorio
 
 import Link from "next/link";
-import { Button } from "@vibe-components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,9 +9,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@vibe-components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vibe-components/ui/tabs";
-import AudioPlayer from "@vibe-components/AudioPlayer";
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AudioPlayer from "@/components/AudioPlayer";
 import { useEffect, useState } from "react";
 import { getScores, ScoreEntry } from "@/services/LeaderboardService";
 import { ArrowLeft } from "lucide-react";

@@ -1,0 +1,43 @@
+diff --git a/node_modules/browserslist/index.js b/node_modules/browserslist/index.js
+index 4d1e639..7419f58 100644
+--- a/node_modules/browserslist/index.js
++++ b/node_modules/browserslist/index.js
+@@ -1049,7 +1049,7 @@ var QUERIES = {
+     matches: [],
+     regexp: /^(firefox|ff|fx)\s+esr$/i,
+     select: function () {
+-      return ['firefox 128']
++      return ['firefox 128', 'firefox 140']
+     }
+   },
+   opera_mini_all: {
+diff --git a/node_modules/browserslist/node.js b/node_modules/browserslist/node.js
+index 8e19444..eaf5a24 100644
+--- a/node_modules/browserslist/node.js
++++ b/node_modules/browserslist/node.js
+@@ -249,15 +249,16 @@ module.exports = {
+   },
+ 
+   loadStat: function loadStat(ctx, name, data) {
+-    if (!ctx.dangerousExtend && !process.env.BROWSERSLIST_DANGEROUS_EXTEND) {
+-      checkExtend(name)
+-    }
+-    var stats = require(require.resolve(
+-      path.join(name, 'browserslist-stats.json'),
+-      { paths: ['.'] }
+-    ))
+-    return normalizeStats(data, stats)
+-  },
++        if (!ctx.dangerousExtend && !process.env.BROWSERSLIST_DANGEROUS_EXTEND) {
++          checkExtend(name)
++        }
++        // --- START PATCH ---
++        var stats = undefined; // Directly set stats to undefined to bypass resolution entirely
++        // If you want to see a warning if it fails, you can add:
++        // console.warn('[Browserslist Patch] Bypassing dynamic stats load for browserslist.');
++        // --- END PATCH ---
++        return normalizeStats(data, stats)
++      },
+ 
+   getStat: function getStat(opts, data) {
+     var stats

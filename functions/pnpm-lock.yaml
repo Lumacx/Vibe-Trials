@@ -15,7 +15,7 @@ importers:
         specifier: ^11.11.1
         version: 11.11.1
       firebase-functions:
-        specifier: ^6.4.0
+        specifier: latest
         version: 6.4.0(firebase-admin@11.11.1)
     devDependencies:
       '@types/express':

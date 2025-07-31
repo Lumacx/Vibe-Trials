@@ -39,6 +39,7 @@
   ],
   "exclude": [
     "node_modules",
+    "functions",  // Add this line to exclude the functions folder
     "vite.config.ts"
   ]
 }

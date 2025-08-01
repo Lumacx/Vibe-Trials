@@ -30,6 +30,21 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {},
   },
+
+  async headers() { // <-- ADD THIS ASYNC HEADERS FUNCTION
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline';",
+          },
+        ],
+      },
+    ];
+  },
+  
   webpack: (config, { isServer }) => {
     // Webpack alias configuration
     config.resolve.alias = {

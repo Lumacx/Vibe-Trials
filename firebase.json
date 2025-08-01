@@ -1,10 +1,16 @@
 {
   "hosting": {
-    "site": "retrovibe-arcade", 
-    "source": ".",              
+    "site": "retrovibe-arcade",
+    "source": ".", 
     "frameworksBackend": {
-      "codebase": "default"     
-    }
+      "codebase": "default"
+    },
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextServer"
+      }
+    ]
   },
   "functions": [
     {

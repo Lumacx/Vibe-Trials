@@ -36,7 +36,12 @@ export default function WalletConnect() {
           Connected: {account.address.slice(0, 6)}...{account.address?.slice(-4)}
         </div>
       ) : (
-        <Button variant="outline" onClick={handleConnect} disabled={isPending}> {/* Corrected: use isPending */}
+        <Button 
+          variant="outline" 
+          onClick={handleConnect} 
+          disabled={isPending} 
+          className="bg-yellow-200 text-gray-800 border-yellow-400 hover:bg-yellow-300 hover:border-yellow-500" // <-- Add your styles here
+        >
           {isPending ? 'Connecting...' : 'Connect Wallet'} {/* Corrected: use isPending */}
         </Button>
       )}

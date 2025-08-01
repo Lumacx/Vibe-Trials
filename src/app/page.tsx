@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic'; // <-- Import dynamic from 'next/dynamic'
 import { Button } from "@/components/ui/button";
 import {
   FireIcon,
@@ -53,10 +54,17 @@ const gameSymbols = [
   },
 ];
 
+// Dynamically import the WalletConnectWrapper.
+// The `ssr: false` option is crucial here. It tells Next.js
+// not to render this component on the server, which avoids the CSP issue.
+const WalletConnectWrapper = dynamic(() => import('@/components/WalletConnectWrapper'), {
+  ssr: false,
+});
+
 export default function Home() {
   // const { status, address, isConnecting, handleConnect, handleDisconnect } = useStarknetConnect(); // <-- Comment this out
-    const address = null; // <-- Use a placeholder
-    const isConnecting = false; // <-- Use a placeholder
+  //  const address = null; // <-- Use a placeholder
+  //  const isConnecting = false; // <-- Use a placeholder
 
 
   return (
@@ -69,14 +77,19 @@ export default function Home() {
           RetroVibe Arcade
         </h1>
       </header>
-
+          
       <div className="relative z-10 text-center mb-8 sm:mb-12 flex flex-col items-center">
-        <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
+      {  <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
           Register/Log In to record your scores on the leaderboard for prizes, airdrops and NFTs in competitions
-        </p>
+        </p>}
 
+          {/* The wallet connection UI is now rendered by the dynamically imported component */}
+        <div className="mt-4">
+          <WalletConnectWrapper />
+          </div>
+      </div>
+      
         {/* Wallet Connection UI */}
-        <div className="mt-4">
           {/*Temporarily remove or replace the wallet connection logic
             address ? (
             <div className="inline-flex items-center bg-primary/10 text-primary-foreground px-4 py-2 rounded-full text-sm sm:text-base cursor-pointer" onClick={handleDisconnect}>
@@ -87,8 +100,7 @@ export default function Home() {
               {isConnecting ? 'Connecting...' : 'Connect Wallet'}
             </Button>
           )*/}
-        </div>
-      </div>
+      
 
       <p className="relative z-10 text-muted-foreground mt-2 text-lg sm:text-xl text-center mb-8 sm:mb-12">
         Select an element to begin your trial.

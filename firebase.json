@@ -1,21 +1,14 @@
 {
   "hosting": {
     "site": "retrovibe-arcade",
-    "public": "out",  
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "headers": [
+    "source": ".", 
+    "frameworksBackend": {
+      "codebase": "default"
+    },
+    "rewrites": [
       {
         "source": "**",
-        "headers": [
-          {
-            "key": "Content-Security-Policy",
-            "value": "script-src 'self' 'unsafe-eval' 'unsafe-inline';"
-          }
-        ]
+        "function": "nextServer"
       }
     ]
   },

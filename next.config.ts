@@ -1,12 +1,13 @@
 // next.config.js
+
 import type { NextConfig } from 'next';
 import type { RuleSetRule } from 'webpack';
 import path from 'path';
 import webpack from 'webpack';
 
 const nextConfig: NextConfig = {
-  // Add this line to enable static export
-  output: 'export',
+  // REMOVE THIS LINE:
+  // output: 'export',
   
   typescript: {
     ignoreBuildErrors: false,
@@ -34,7 +35,6 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {},
   },
-  // Keep the headers function to define the CSP
   async headers() {
     return [
       {
@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
     ];
   },
   webpack: (config, { isServer }) => {
-    // ... (rest of your webpack config, unchanged)
+    // ... (Your existing webpack config, unchanged)
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       '@': path.resolve(__dirname, 'src'),

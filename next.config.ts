@@ -1,9 +1,13 @@
+// next.config.js
 import type { NextConfig } from 'next';
 import type { RuleSetRule } from 'webpack';
 import path from 'path';
-import webpack from 'webpack'; // Ensure this is imported
+import webpack from 'webpack';
 
 const nextConfig: NextConfig = {
+  // Add this line to enable static export
+  output: 'export',
+  
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -30,8 +34,8 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {},
   },
-
-  async headers() { // <-- ADD THIS ASYNC HEADERS FUNCTION
+  // Keep the headers function to define the CSP
+  async headers() {
     return [
       {
         source: '/:path*',
@@ -44,9 +48,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
   webpack: (config, { isServer }) => {
-    // Webpack alias configuration
+    // ... (rest of your webpack config, unchanged)
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       '@': path.resolve(__dirname, 'src'),
@@ -54,17 +57,13 @@ const nextConfig: NextConfig = {
       '@manifest': path.resolve(__dirname, 'dojo/contracts/target/manifest_dev.json'),
       '#/dojo/config/manifest': path.resolve(__dirname, 'dojo/config/manifest.ts'),
       'browserslist': path.resolve(__dirname, 'node_modules/browserslist'),
-      'browserslist-stats.json': path.resolve(__dirname, 'empty-json.js'), // Keep this bypass
+      'browserslist-stats.json': path.resolve(__dirname, 'empty-json.js'),
     };
-
-    // Enable WebAssembly and top-level await experiments
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
       topLevelAwait: true,
     };
-
-    // Filter out existing WebAssembly rules
     config.module.rules = config.module.rules.filter(
       (rule: RuleSetRule) =>
         !(
@@ -72,8 +71,6 @@ const nextConfig: NextConfig = {
           rule.type === 'webassembly/async'
         )
     );
-
-    // Custom rule for .wasm files
     config.module.rules.unshift({
       test: /\.wasm$/,
       type: 'webassembly/async',
@@ -85,8 +82,6 @@ const nextConfig: NextConfig = {
         filename: 'static/wasm/[name].[contenthash].wasm',
       },
     });
-
-    // Explicit Babel-loader rule for TypeScript files
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       exclude: /node_modules/,
@@ -97,9 +92,6 @@ const nextConfig: NextConfig = {
         },
       },
     });
-
-    // --- RE-ENABLING CUSTOM CSS/POSTCSS/TAILWINDCSS RULE ---
-    // This rule is necessary if Next.js's default CSS handling is not sufficient for your setup.
     config.module.rules.push({
       test: /\.css$/i,
       use: [
@@ -115,9 +107,6 @@ const nextConfig: NextConfig = {
         },
       ],
     });
-    // --- END RE-ENABLE ---
-
-    // Rule for browserslist (kept for consistency, might be bypassed by alias)
     config.module.rules.push({
       test: /browserslist/,
       loader: 'babel-loader',
@@ -125,31 +114,16 @@ const nextConfig: NextConfig = {
         presets: ['next/babel'],
       },
     });
-
-    // Handle JSON files from node_modules specifically (general rule)
     config.module.rules.push({
       test: /\.json$/,
       type: 'asset/resource',
     });
-
-    // IgnorePlugin for browserslist-stats.json
     config.plugins.push(
       new webpack.IgnorePlugin({
         resourceRegExp: /browserslist-stats\.json/,
         contextRegExp: /browserslist[\\/]node_modules[\\/]browserslist$/,
       })
     );
-
-    // NormalModuleReplacementPlugin for browserslist (if still needed)
-    // if (!isServer) {
-    //     config.plugins.push(
-    //         new webpack.NormalModuleReplacementPlugin(
-    //             /browserslist\/node/,
-    //             path.resolve(__dirname, 'browserslist/index')
-    //         )
-    //     );
-    // }
-
     return config;
   },
 };

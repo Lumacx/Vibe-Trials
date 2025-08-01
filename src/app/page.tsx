@@ -12,7 +12,8 @@ import {
   TreasureChestIcon,
 } from "@/components/icons/GameIcons";
 import AudioPlayer from '@/components/AudioPlayer';
-import { useStarknetConnect } from '../dojo/useStarknetConnect'; // Import the useStarknetConnect hook
+//temporally remove the useStarknetConnect hook to render on firebase Aug 1 2025
+//import { useStarknetConnect } from '../dojo/useStarknetConnect'; // Import the useStarknetConnect hook
 
 const gameSymbols = [
   {
@@ -53,7 +54,10 @@ const gameSymbols = [
 ];
 
 export default function Home() {
-  const { status, address, isConnecting, handleConnect, handleDisconnect } = useStarknetConnect();
+  // const { status, address, isConnecting, handleConnect, handleDisconnect } = useStarknetConnect(); // <-- Comment this out
+    const address = null; // <-- Use a placeholder
+    const isConnecting = false; // <-- Use a placeholder
+
 
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-background text-foreground overflow-hidden">
@@ -73,7 +77,8 @@ export default function Home() {
 
         {/* Wallet Connection UI */}
         <div className="mt-4">
-          {address ? (
+          {/*Temporarily remove or replace the wallet connection logic
+            address ? (
             <div className="inline-flex items-center bg-primary/10 text-primary-foreground px-4 py-2 rounded-full text-sm sm:text-base cursor-pointer" onClick={handleDisconnect}>
               Connected: {address.slice(0, 6)}...{address.slice(-4)}
             </div>
@@ -81,7 +86,7 @@ export default function Home() {
             <Button variant="outline" onClick={handleConnect} disabled={isConnecting} className="bg-yellow-200 text-gray-800 border-yellow-400 hover:bg-yellow-300 hover:border-yellow-500">
               {isConnecting ? 'Connecting...' : 'Connect Wallet'}
             </Button>
-          )}
+          )*/}
         </div>
       </div>
 

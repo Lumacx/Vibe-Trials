@@ -1,0 +1,9 @@
+{
+    "contracts": [
+      {
+        "name": "GameContract",
+        "address": "0x0123456789abcdef"
+      }
+    ]
+  }
+  

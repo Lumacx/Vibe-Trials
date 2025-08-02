@@ -1,17 +1,18 @@
 {
-  "name": "nextn",
+  "name": "retrovibe-arcade",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbopack": "next dev --turbopack",
     "dev:webpack": "NEXT_DISABLE_TURBOPACK=1 next dev",
-    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
-    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
+    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts"
   },
   "dependencies": {
     "@cartridge/connector": "^0.7.13",
@@ -58,7 +59,6 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.5.0",
     "firebase": "^11.9.1",
-    "firebase-functions": "latest",
     "genkit": "^1.8.0",
     "graphql": "^16.11.0",
     "graphql-request": "^7.2.0",
@@ -91,6 +91,11 @@
     "babel-loader": "^10.0.0",
     "browserslist": "^4.25.1",
     "css-loader": "^7.1.2",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.3.3",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "genkit-cli": "^1.8.0",
     "postcss": "^8.5.6",
     "postcss-loader": "^8.1.1",
@@ -103,9 +108,9 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "browserslist": [
-  "defaults",
-  ">0.2%",
-  "not dead",
-  "not op_mini all"
-]
+    "defaults",
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }

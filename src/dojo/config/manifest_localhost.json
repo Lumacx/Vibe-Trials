@@ -1,0 +1,13 @@
+{
+    "world": {
+      "address": "0x0cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe",
+      "class_hash": "0x0"
+    },
+    "contracts": [
+      {
+        "name": "game_contract",
+        "address": "0x0123012301230123012301230123012301230123012301230123012301230123"
+      }
+    ]
+  }
+  

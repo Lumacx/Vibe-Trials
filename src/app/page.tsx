@@ -80,7 +80,7 @@ export default function Home() {
           
       <div className="relative z-10 text-center mb-8 sm:mb-12 flex flex-col items-center">
       {  <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
-          Register/Log In to record your scores on the leaderboard for prizes, airdrops and NFTs in competitions
+          Register/Log In to record your scores on the leaderboard for prizes, airdrops and NFTs in competitions COMING SOON!
         </p>}
 
           {/* The wallet connection UI is now rendered by the dynamically imported component */}
